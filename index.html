@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Atlanta Happy Hour (Mon–Fri)</title>
+  <title>Atlanta Happy Hour (M–F)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Use a modern sans-serif font -->
+  <!-- Use Roboto from Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
   <style>
-    /* Global resets & mobile-friendly styles */
-    * {
-      box-sizing: border-box;
-    }
+    /* Global & Mobile Styles */
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 0;
@@ -26,23 +22,19 @@
       font-size: 1.4rem;
     }
     .container {
-      max-width: 800px; /* slightly wider so columns fit on phone screens */
+      max-width: 800px;
       margin: auto;
-      padding-bottom: 50px; /* space after last table */
+      padding-bottom: 50px;
       position: relative;
     }
-
-    /* Sticky day-row at the very top */
+    /* Sticky top day banner (M, T, W, T, F) */
     .sticky-day-row {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: #4CAF50;
-      color: #fff;
       display: grid;
       grid-template-columns: 150px repeat(5, 1fr);
-      /* 1 column for label + 5 for M-F */
-      align-items: center;
+      background: #4CAF50;
       border-bottom: 1px solid #388E3C;
     }
     .sticky-day-row > div {
@@ -52,43 +44,38 @@
       font-size: 0.85rem;
       cursor: pointer;
     }
+    /* First cell is just a label (can be instructions) */
     .sticky-day-row > div:first-child {
-      background: #388E3C; /* label area (blank or instructions) */
       text-align: left;
-      font-size: 0.8rem;
-    }
-    .sticky-day-row > div:hover {
-      background: #66BB6A; /* highlight on hover */
+      background: #388E3C;
+      font-size: 0.75rem;
     }
     .highlight-column {
-      background: #66BB6A !important; /* stronger highlight color */
+      background: #66BB6A !important;
     }
-
-    /* Each neighborhood is a separate <section> with its own pinned header. */
+    /* Neighborhood Section */
     section.neighborhood {
-      margin-top: 2rem;
-      position: relative;
+      margin-top: 0; /* no extra gap – header touches day banner */
     }
     .neighborhood-header {
       position: sticky;
-      top: 44px; /* pinned just below the day row (which is ~44px tall) */
+      top: 44px; /* height of sticky-day-row */
       z-index: 999;
       background: #eee;
       padding: 0.75rem 1rem;
       border-bottom: 1px solid #ccc;
     }
     .neighborhood-title {
-      font-weight: bold;
-      font-size: 1rem;
       margin: 0;
+      font-weight: 700;
+      font-size: 1rem;
     }
     .neighborhood-desc {
+      margin: 4px 0 0;
       font-size: 0.8rem;
       color: #666;
-      margin-top: 4px;
     }
-
-    /* Table container for horizontal scrolling if needed */
+    /* Table for each neighborhood */
     .table-wrapper {
       overflow-x: auto;
       background: #fff;
@@ -98,14 +85,14 @@
     }
     table {
       border-collapse: collapse;
-      min-width: 600px; /* ensures columns won't collapse */
-      table-layout: fixed; 
+      min-width: 600px;
+      table-layout: fixed;
       width: 100%;
     }
     thead th {
       background: #fafafa;
       border-bottom: 2px solid #ddd;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-align: center;
       padding: 0.5rem;
@@ -114,15 +101,16 @@
       border: 1px solid #eee;
       text-align: center;
       vertical-align: middle;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       padding: 0.4rem;
       position: relative;
     }
-    /* First column: narrower, for restaurant info */
+    /* First column: restaurant info – make it narrow */
     .rest-info {
-      width: 150px; 
+      width: 150px;
       text-align: left;
       cursor: pointer;
+      padding: 0.5rem;
     }
     .rest-header {
       display: flex;
@@ -154,268 +142,1216 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    .maps-link svg:hover {
-      stroke: #000;
-    }
     .overall-deal {
       display: block;
       font-size: 0.75rem;
       color: #666;
-      margin-top: 2px;
+      margin-top: 4px;
     }
-
-    /* Check marks & day deals */
+    /* Day columns: now just abbreviated letters */
+    .day-cell {
+      font-size: 1rem;
+      padding: 0.4rem;
+      position: relative;
+    }
     .checkmark {
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       font-weight: bold;
       color: green;
       line-height: 1;
     }
     .day-deal {
-      display: block;
       font-size: 0.7rem;
       color: #d81b60;
       line-height: 1;
     }
-
-    /* 1/2 off wine highlight (light burgundy) */
-    .wine-highlight {
-      background: #b05b72; /* light burgundy */
-      color: #fff;
-    }
-
-    /* Row hover effect */
+    /* Remove burgundy background for 1/2 off wine – just text */
+    /* Row hover */
     tr.rest-row:hover {
       background: #f9f9f9;
     }
-
-    /* Stop row-click if user clicks the map pin */
-    .maps-link {
-      margin-left: 4px;
+    /* Responsive: allow horizontal scroll if needed */
+    @media (max-width: 600px) {
+      .container { padding: 0 5px; }
+      table { min-width: 500px; }
     }
-
-    /* Basic responsiveness for smaller screens, 
-       so user can horizontally scroll table. 
-       We rely on .sticky-day-row for day labels. 
-       If you want a fully stacked layout, you can do more advanced CSS. 
-    */
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Atlanta Happy Hour (M–F)</h1>
 
-<div class="container">
-  <h1>Atlanta Happy Hour (Mon–Fri)</h1>
+    <!-- Sticky Day Row -->
+    <div class="sticky-day-row" id="dayRow">
+      <div>Info</div>
+      <div data-day="mon">M</div>
+      <div data-day="tue">T</div>
+      <div data-day="wed">W</div>
+      <div data-day="thu">T</div>
+      <div data-day="fri">F</div>
+    </div>
 
-  <!-- Sticky day row at top. The first cell is just a label or blank. -->
-  <div class="sticky-day-row" id="dayRow">
-    <div>Tap a day to highlight</div>
-    <div data-day="mon">Mon</div>
-    <div data-day="tue">Tue</div>
-    <div data-day="wed">Wed</div>
-    <div data-day="thu">Thu</div>
-    <div data-day="fri">Fri</div>
+    <!-- ========= MIDTOWN ========= -->
+    <section class="neighborhood" id="midtown">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Midtown</p>
+        <p class="neighborhood-desc">Arts & nightlife hub, diverse and fabulous.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 5Church Atlanta: only Wednesday -->
+            <tr class="rest-row" onclick="window.open('https://5churchatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://5churchatlanta.com/wp-content/uploads/2019/12/5C.png" alt="5Church ATL">
+                  <span class="rest-name">5Church ATL</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=5Church+Atlanta','_blank');">
+                    <!-- Line-art map pin icon -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <!-- Overall deal: only Wed, so state the time and a cute phrase -->
+                <span class="overall-deal">3–8pm on W: Fierce & Fabulous!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell">
+                <div class="checkmark">✔</div>
+                <div class="day-deal">3–8pm</div>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+
+            <!-- Bar Juniper: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://barjuniper.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://barjuniper.com/wp-content/uploads/2023/01/bar-juniper-logo.png" alt="Bar Juniper">
+                  <span class="rest-name">Bar Juniper</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bar+Juniper+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Cheers, queen!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Alta Toro: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://altatoro.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/altatoro.com" alt="Alta Toro">
+                  <span class="rest-name">Alta Toro</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Alta+Toro+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">3–5pm: Sip & Slay!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Bulla Gastrobar: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://bullagastrobar.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/bullagastrobar.com" alt="Bulla Gastrobar">
+                  <span class="rest-name">Bulla Gastrobar</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bulla+Gastrobar+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">3–6:30pm: Wine & Dine, honey!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Campagnolo: Only Wednesday, with ½ off wine -->
+            <tr class="rest-row" onclick="window.open('https://campagnoloatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/campagnoloatlanta.com" alt="Campagnolo">
+                  <span class="rest-name">Campagnolo</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Campagnolo+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Wed: ½ off wine 🍷 – Slay those sips!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell">
+                <div class="checkmark">✔</div>
+                <div class="day-deal">½ off wine 🍷</div>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+
+            <!-- The Consulate: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://theconsulateatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/theconsulateatlanta.com" alt="The Consulate">
+                  <span class="rest-name">The Consulate</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=The+Consulate+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: 3–7pm – Werk it, darling!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Ecco: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://eccoatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/eccoatlanta.com" alt="Ecco">
+                  <span class="rest-name">Ecco</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Ecco+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Sip, slay & sparkle!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- El Valle: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://elvalleatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/elvalleatlanta.com" alt="El Valle">
+                  <span class="rest-name">El Valle</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=El+Valle+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Fabulous sips, babe!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- El Viñedo Local: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://elvinedolocal.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/elvinedolocal.com" alt="El Viñedo Local">
+                  <span class="rest-name">El Viñedo Local</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=El+Vi%C3%B1edo+Local+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">3–5pm: Wine & chic vibes!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Emilio’s Tacos & Tequilas: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://emiliostacos.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/emiliostacos.com" alt="Emilio’s Tacos">
+                  <span class="rest-name">Emilio’s Tacos</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Emilio%27s+Tacos+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Tacos & Tequila—Yasss!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Establishment: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://establishmentatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/establishmentatlanta.com" alt="Establishment">
+                  <span class="rest-name">Establishment</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Establishment+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">3–7pm: Fierce & fun—serve it up!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Livingston: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://livingstonatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/livingstonatlanta.com" alt="Livingston">
+                  <span class="rest-name">Livingston</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Livingston+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–7pm: Sip, slay & sparkle!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Lure: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://lureatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/lureatlanta.com" alt="Lure">
+                  <span class="rest-name">Lure</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Lure+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Work it & wine it, babe!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Marlow’s Tavern: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://marlowstavern.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/marlowstavern.com" alt="Marlow’s Tavern">
+                  <span class="rest-name">Marlow’s Tavern</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Marlow%27s+Tavern+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Sip & slay, darling!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Olive Bistro: Only Mon & Wed -->
+            <tr class="rest-row" onclick="window.open('https://olivebistroatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/olivebistroatlanta.com" alt="Olive Bistro">
+                  <span class="rest-name">Olive Bistro</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Olive+Bistro+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon & Wed: 4–6pm – Sip, slay, repeat!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+
+            <!-- South City Kitchen: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://southcitykitchen.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/southcitykitchen.com" alt="South City Kitchen">
+                  <span class="rest-name">South City Kitchen</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=South+City+Kitchen+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: 4–6pm – Yass, queen!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Wicked Wolf: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://wickedwolfatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/wickedwolfatlanta.com" alt="Wicked Wolf">
+                  <span class="rest-name">Wicked Wolf</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Wicked+Wolf+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: 4–6pm – ½ off cocktails? Slay!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Zocalo: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://zocaloatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/zocaloatlanta.com" alt="Zocalo">
+                  <span class="rest-name">Zocalo</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Zocalo+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: 4–6pm – Sip & slay!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+
+            <!-- Saltwood: Fri only -->
+            <tr class="rest-row" onclick="window.open('https://saltwoodatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/saltwoodatlanta.com" alt="Saltwood">
+                  <span class="rest-name">Saltwood</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Saltwood+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Fri: 10 cocktails/$9 wines – Yasss!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell">
+                <div class="checkmark">✔</div>
+                <div class="day-deal">F</div>
+              </td>
+              <td class="day-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= WEST MIDTOWN ========= -->
+    <section class="neighborhood" id="west-midtown">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">West Midtown</p>
+        <p class="neighborhood-desc">Trendy restaurants in converted warehouses.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Barcelona Wine Bar (West Midtown): Mon only -->
+            <tr class="rest-row" onclick="window.open('https://barcelonawinebar.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/barcelonawinebar.com" alt="Barcelona Wine Bar">
+                  <span class="rest-name">Barcelona Wine Bar</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Barcelona+Wine+Bar+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon: 🍷 flight & 🍸 cocktails</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div><div class="day-deal">M</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+            <!-- Bastone: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://bastoneatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/bastoneatlanta.com" alt="Bastone">
+                  <span class="rest-name">Bastone</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bastone+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–7pm: Slay & savor!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- Cooks & Soldiers: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://cooksandsoldiers.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/cooksandsoldiers.com" alt="Cooks & Soldiers">
+                  <span class="rest-name">Cooks & Soldiers</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Cooks+%26+Soldiers+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: Bold bites & cocktails!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- Postino (West Midtown): Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://postino.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/postino.com" alt="Postino">
+                  <span class="rest-name">Postino (W.M.)</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Postino+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: Crisp & cool sips!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= OLD FOURTH WARD ========= -->
+    <section class="neighborhood" id="old-fourth-ward">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Old Fourth Ward</p>
+        <p class="neighborhood-desc">Historic vibes with modern flavor.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Buena Vida Tapas: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://buenavidatapas.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/buenavidatapas.com" alt="Buena Vida Tapas">
+                  <span class="rest-name">Buena Vida Tapas</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Buena+Vida+Tapas+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Taste & tease!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- City Winery: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://citywinery.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/citywinery.com" alt="City Winery">
+                  <span class="rest-name">City Winery</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=City+Winery+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Sip & slay, darling!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= INMAN PARK ========= -->
+    <section class="neighborhood" id="inman-park">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Inman Park</p>
+        <p class="neighborhood-desc">Chic vibes in a leafy enclave.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Barcelona Wine Bar (Inman) – Mon only -->
+            <tr class="rest-row" onclick="window.open('https://barcelonawinebar.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/barcelonawinebar.com" alt="Barcelona Wine Bar">
+                  <span class="rest-name">Barcelona (Inman)</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Barcelona+Wine+Bar+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon: Bold & beautiful sips!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div><div class="day-deal">M</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= BUCKHEAD ========= -->
+    <section class="neighborhood" id="buckhead">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Buckhead</p>
+        <p class="neighborhood-desc">Upscale vibes, glitz & glam in Atlanta’s finest district.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Chido & Padre’s: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://chidoandpadres.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/chidoandpadres.com" alt="Chido & Padre’s">
+                  <span class="rest-name">Chido & Padre’s</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Chido+%26+Padre%E2%80%99s+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri:  – Bold & beautiful vibes!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- Fadó Irish Pub: Thu only -->
+            <tr class="rest-row" onclick="window.open('https://fadopub.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/fadopub.com" alt="Fadó Irish Pub">
+                  <span class="rest-name">Fadó Irish Pub</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Fado+Irish+Pub+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Thu:  – Sláinte, darling!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell">
+                <div class="checkmark">✔</div>
+                <div class="day-deal">Thu</div>
+              </td>
+              <td class="day-cell"></td>
+            </tr>
+            <!-- The Iberian Pig (Buckhead): Mon–Fri, 5–6pm -->
+            <tr class="rest-row" onclick="window.open('https://theiberianpig.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/theiberianpig.com" alt="The Iberian Pig">
+                  <span class="rest-name">Iberian Pig (B)</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=The+Iberian+Pig+Buckhead','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">5–6pm: Fierce & fresh!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- North Italia: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://northitalia.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/northitalia.com" alt="North Italia">
+                  <span class="rest-name">North Italia</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=North+Italia+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">3–6pm: Eat, slay, repeat!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- Postino (Buckhead): Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://postino.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/postino.com" alt="Postino (Buckhead)">
+                  <span class="rest-name">Postino (B)</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Postino+Buckhead+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: Chic sips & bites!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- Mission + Market: Fri only -->
+            <tr class="rest-row" onclick="window.open('https://missionandmarket.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/missionandmarket.com" alt="Mission + Market">
+                  <span class="rest-name">Mission + Market</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Mission+and+Market+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Fri: 3–6pm – Werk those cocktails!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell">
+                <div class="checkmark">✔</div>
+                <div class="day-deal">F</div>
+              </td>
+              <td class="day-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= DECATUR ========= -->
+    <section class="neighborhood" id="decatur">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Decatur</p>
+        <p class="neighborhood-desc">Laid-back vibes with a side of sass.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- The Iberian Pig (Decatur): Mon–Fri 5–6pm -->
+            <tr class="rest-row" onclick="window.open('https://theiberianpig.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/theiberianpig.com" alt="The Iberian Pig">
+                  <span class="rest-name">Iberian Pig (Decatur)</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=The+Iberian+Pig+Decatur','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">5–6pm: Get your glam on!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+            <!-- The White Bull: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://thewhitebull.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/thewhitebull.com" alt="The White Bull">
+                  <span class="rest-name">The White Bull</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=The+White+Bull+Decatur','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Fri: 10 cocktails/$9 wines – Slay!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= PIEDMONT HEIGHTS ========= -->
+    <section class="neighborhood" id="piedmont-heights">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Piedmont Heights</p>
+        <p class="neighborhood-desc">Small-town charm meets big-city style.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Grana: Mon–Fri -->
+            <tr class="rest-row" onclick="window.open('https://granaatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/granaatlanta.com" alt="Grana">
+                  <span class="rest-name">Grana</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Grana+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">4–6pm: Elegance with a twist!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= BELTLINE EASTSIDE ========= -->
+    <section class="neighborhood" id="beltline-eastside">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">BeltLine Eastside</p>
+        <p class="neighborhood-desc">Urban art & cool craft brews.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Lingering Shade: Only Mon & Tue -->
+            <tr class="rest-row" onclick="window.open('https://lingeringshadeatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/lingeringshadeatlanta.com" alt="Lingering Shade">
+                  <span class="rest-name">Lingering Shade</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Lingering+Shade+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon–Tue: Chill & cheers!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div><div class="day-deal">M–T</div></td>
+              <td class="day-cell"><div class="checkmark">✔</div><div class="day-deal">M–T</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= PIEDMONT PARK ========= -->
+    <section class="neighborhood" id="piedmont-park">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Piedmont Park</p>
+        <p class="neighborhood-desc">Lush, lively, and full of energy.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- The Nook: Mon only -->
+            <tr class="rest-row" onclick="window.open('https://thenookatlanta.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/thenookatlanta.com" alt="The Nook">
+                  <span class="rest-name">The Nook</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=The+Nook+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Mon: Wing specials—so extra!</span>
+              </td>
+              <td class="day-cell"><div class="checkmark">✔</div><div class="day-deal">M</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+            <!-- Park Tavern: Wed only -->
+            <tr class="rest-row" onclick="window.open('https://parktavern.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/parktavern.com" alt="Park Tavern">
+                  <span class="rest-name">Park Tavern</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Park+Tavern+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Wed: Sushi specials—so delish!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"><div class="checkmark">✔</div><div class="day-deal">W</div></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= GRANT PARK ========= -->
+    <section class="neighborhood" id="grant-park">
+      <div class="neighborhood-header">
+        <p class="neighborhood-title">Grant Park</p>
+        <p class="neighborhood-desc">Historic charm with modern fun.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Restaurant & Deal</th>
+              <th>M</th>
+              <th>T</th>
+              <th>W</th>
+              <th>T</th>
+              <th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Republic Social House: Thu only -->
+            <tr class="rest-row" onclick="window.open('https://republicsocialhouse.com','_blank')">
+              <td class="rest-info">
+                <div class="rest-header">
+                  <img class="rest-icon" src="https://logo.clearbit.com/republicsocialhouse.com" alt="Republic Social House">
+                  <span class="rest-name">Republic Social House</span>
+                  <div class="maps-link"
+                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Republic+Social+House+Atlanta','_blank');">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="overall-deal">Thu: Fierce deals – get in formation!</span>
+              </td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell"></td>
+              <td class="day-cell">
+                <div class="checkmark">✔</div>
+                <div class="day-deal">T</div>
+              </td>
+              <td class="day-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p style="font-size: 0.75rem; text-align: center; margin-top: 1rem; color: #666;">
+      *As of December 2024 – check with each venue for current offers.
+    </p>
   </div>
 
-  <!-- ========== Midtown ========== -->
-  <section class="neighborhood" id="midtown">
-    <div class="neighborhood-header">
-      <p class="neighborhood-title">Midtown</p>
-      <p class="neighborhood-desc">Arts & nightlife hub, diverse restaurants & bars.</p>
-    </div>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Restaurant</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          <!-- 5Church Atlanta (Wed only) -->
-          <tr class="rest-row" onclick="window.open('https://5churchatlanta.com','_blank')">
-            <td class="rest-info">
-              <div class="rest-header">
-                <!-- Use direct logo if Clearbit fails. Example: custom link -->
-                <img class="rest-icon" src="https://5churchatlanta.com/wp-content/uploads/2019/12/5C.png" alt="5Church Logo">
-                <span class="rest-name">5Church ATL</span>
-                <div class="maps-link" 
-                     onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=5Church+Atlanta','_blank');">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-              </div>
-              <!-- Emojis for deals, short fun text -->
-              <span class="overall-deal">HH Wed 3–8pm, 🍷 $6 wine, 🍸 $9 cocktails</span>
-            </td>
-            <td></td>
-            <td></td>
-            <td>
-              <div class="checkmark">✓</div>
-              <span class="day-deal">3–8pm</span>
-            </td>
-            <td></td>
-            <td></td>
-          </tr>
-
-          <!-- Bar Juniper: If no clearbit, custom link to logo, e.g. "barjuniper.png" -->
-          <tr class="rest-row" onclick="window.open('https://barjuniper.com','_blank')">
-            <td class="rest-info">
-              <div class="rest-header">
-                <img class="rest-icon" src="https://barjuniper.com/wp-content/uploads/2023/01/bar-juniper-logo.png" alt="Bar Juniper Logo">
-                <span class="rest-name">Bar Juniper</span>
-                <div class="maps-link"
-                     onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bar+Juniper+Atlanta','_blank');">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="overall-deal">Mon–Fri 4–6pm, 🍷 $7, 🍹 $8.50 cocktails</span>
-            </td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-          </tr>
-
-          <!-- Alta Toro: M-F 3-5, $6 wines, $8 Toro Rising -->
-          <tr class="rest-row" onclick="window.open('https://altatoro.com','_blank')">
-            <td class="rest-info">
-              <div class="rest-header">
-                <img class="rest-icon" src="https://logo.clearbit.com/altatoro.com" alt="Alta Toro">
-                <span class="rest-name">Alta Toro</span>
-                <div class="maps-link"
-                     onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Alta+Toro+Atlanta','_blank');">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="overall-deal">Mon–Fri 3–5pm, 🍷 $6 wines, 🍹 $8 “Toro Rising”</span>
-            </td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-          </tr>
-
-          <!-- Bulla Gastrobar: M-F 3-6:30, $7 wines, $28 bottles, etc. -->
-          <tr class="rest-row" onclick="window.open('https://bullagastrobar.com','_blank')">
-            <td class="rest-info">
-              <div class="rest-header">
-                <img class="rest-icon" src="https://logo.clearbit.com/bullagastrobar.com" alt="Bulla Gastrobar">
-                <span class="rest-name">Bulla Gastrobar</span>
-                <div class="maps-link"
-                     onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bulla+Gastrobar+Atlanta','_blank');">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="overall-deal">Mon–Fri 3–6:30pm, 🍷 $7 wines, 🍾 $28 bottles</span>
-            </td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-            <td><div class="checkmark">✓</div></td>
-          </tr>
-
-          <!-- Campagnolo: Wed only 1/2 off wine highlight -->
-          <tr class="rest-row" onclick="window.open('https://campagnoloatlanta.com','_blank')">
-            <td class="rest-info">
-              <div class="rest-header">
-                <img class="rest-icon" src="https://logo.clearbit.com/campagnoloatlanta.com" alt="Campagnolo">
-                <span class="rest-name">Campagnolo</span>
-                <div class="maps-link"
-                     onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Campagnolo+Atlanta','_blank');">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="overall-deal">Wine Wednesday: 1/2 off bottles 🍷</span>
-            </td>
-            <td></td>
-            <td></td>
-            <td class="wine-highlight">
-              <div class="checkmark">✓</div>
-              <span class="day-deal">1/2 off wine 🍷</span>
-            </td>
-            <td></td>
-            <td></td>
-          </tr>
-
-          <!-- (Continue adding all Midtown restaurants from your original table: 
-               The Consulate, Ecco, El Valle, El Viñedo, Emilio's, 
-               Establishment, Livingstone, Lure, Marlow's Tavern, 
-               Olive Bistro (Mon & Wed?), South City Kitchen, Wicked Wolf, 
-               Zocalo, Saltwood on Fri only, etc.) 
-               For 1/2 off wine nights, use .wine-highlight 
-               For day-specific deals, add day-deal text. 
-          -->
-
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ========== West Midtown, Old Fourth Ward, Inman Park, Buckhead, Decatur, 
-       Piedmont Heights, BeltLine Eastside, Piedmont Park, Grant Park, etc. ==========
-       Repeat the same pattern: pinned neighborhood header, 
-       table with M-F columns, all restaurants, 
-       highlight 1/2 off wine nights in burgundy, 
-       show check marks & day deals. 
-       Use short, fun emojis in overall-deal text. 
-  -->
-
-  <!-- (Due to length, we won't reprint every single row here, 
-       but you'd continue for each neighborhood in the same style, 
-       ensuring no restaurant is skipped.) -->
-
-  <p style="font-size: 0.75rem; text-align: center; margin-top: 2rem; color: #666;">
-    *As of December 2024, call or visit each restaurant for up-to-date offers.
-  </p>
-</div>
-
-<!-- Basic JavaScript to highlight a column if tapped in the top day row -->
-<script>
-  const dayRow = document.getElementById('dayRow');
-  const dayCells = dayRow.querySelectorAll('[data-day]');
-  
-  dayCells.forEach(cell => {
-    cell.addEventListener('click', () => {
-      // Identify which day was clicked (mon, tue, wed, thu, fri)
-      const day = cell.getAttribute('data-day');
-      // Toggle highlight for all table cells in that column
-      // We'll map day -> column index: mon=1, tue=2, wed=3, thu=4, fri=5
-      const colIndex = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 }[day];
-      
-      // For each table, toggle highlight on the relevant <td>
-      document.querySelectorAll('table').forEach(table => {
-        table.querySelectorAll('tr').forEach((row, rIdx) => {
-          const cells = row.querySelectorAll('td');
-          if (cells[colIndex]) {
-            cells[colIndex].classList.toggle('highlight-column');
-          }
+  <!-- JavaScript for column highlighting -->
+  <script>
+    const dayRow = document.getElementById('dayRow');
+    const dayCells = dayRow.querySelectorAll('[data-day]');
+    
+    dayCells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        const day = cell.getAttribute('data-day');
+        // Map day to column index (1 = first data column)
+        const colIndex = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 }[day];
+        document.querySelectorAll('table').forEach(table => {
+          table.querySelectorAll('tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if(cells[colIndex]) {
+              cells[colIndex].classList.toggle('highlight-column');
+            }
+          });
         });
       });
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>
