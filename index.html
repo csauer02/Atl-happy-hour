@@ -1,259 +1,296 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Atlanta Happy Hour – Texas Queer Rodeo Vibe</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Modern font -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-  <style>
-    /* Global Reset & Basic Settings */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      padding: 8px;
-      font-family: 'Roboto', sans-serif;
-      background: #F9F1ED; /* Soft dusty pink background */
-      color: #3A2E2A;       /* Warm brownish text */
-      font-size: 1rem;
-      line-height: 1.4;
-    }
-    h1 {
-      text-align: center;
-      margin: 0.5rem 0 1rem;
-      font-size: 1.5rem;
-    }
-    .container {
-      max-width: 100%;
-      margin: auto;
-      padding-bottom: 50px;
-      position: relative;
-    }
-
-    /* Neighborhood Header (Sticky) – Single line, southwestern color */
-    .neighborhood-header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: #C79B7B; /* Muted saddle-brown tone */
-      color: #fff;
-      padding: 0.4rem 0.6rem;
-      font-weight: 700;
-      font-size: 1.1rem;
-      border-bottom: 2px solid #A07A5A;
-      margin: 0;
-    }
-
-    /* Table container – no horizontal scroll */
-    .table-wrapper {
-      overflow-x: visible;
-      margin-top: 0;
-      border: 3px double #D2B7A6; /* Subtle “rope” style border */
-      border-radius: 4px;
-      background: #fff;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: auto; /* Dynamic layout, no forced scroll */
-    }
-
-    /* Sticky Day Header Row */
-    thead {
-      position: sticky;
-      top: 2.3rem; /* Just below the neighborhood header’s height */
-      z-index: 900;
-      background: #EBD3C6; /* Lighter dusty peach */
-    }
-    thead th {
-      border-bottom: 1px solid #C79B7B;
-      text-align: center;
-      font-size: 0.9rem;
-      padding: 0.3rem 0.2rem;
-      white-space: nowrap;
-    }
-    /* First column narrower by ~30%, let text wrap */
-    thead th.rest-col {
-      width: 30%;
-      text-align: left;
-      padding-left: 0.4rem;
-    }
-
-    /* Alternating Row Colors – southwestern pastels */
-    tbody tr:nth-child(odd) {
-      background: #F2E7E1; /* Soft, warm neutral */
-    }
-    tbody tr:nth-child(even) {
-      background: #F9F1ED; /* Slightly pinker tone */
-    }
-
-    tbody td {
-      border: none;
-      padding: 0.3rem 0.2rem;
-      vertical-align: middle;
-      font-size: 0.9rem;
-      white-space: normal; /* Allow wrapping */
-      word-wrap: break-word;
-    }
-
-    /* Restaurant Info Column */
-    .rest-info {
-      cursor: pointer;
-      padding-left: 0.4rem;
-    }
-    .rest-header {
-      display: flex;
-      align-items: center;
-    }
-    .rest-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      margin-right: 6px;
-      flex-shrink: 0;
-    }
-    .rest-name {
-      font-weight: 700;
-      margin-right: 4px;
-      font-size: 1rem;
-    }
-    .maps-link {
-      margin-left: auto;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .maps-link svg {
-      width: 16px;
-      height: 16px;
-      stroke: #3A2E2A; /* same warm brown text color */
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .overall-deal {
-      display: block;
-      font-size: 0.85rem;
-      color: #5A473F;
-      margin-top: 2px;
-    }
-
-    /* Day Columns – minimal width */
-    .day-cell {
-      text-align: center;
-      vertical-align: middle;
-      padding: 0.2rem;
-    }
-    .checkmark {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #4CAF50; /* Green check color */
-      line-height: 1;
-    }
-    .day-deal {
-      display: block;
-      font-size: 0.75rem;
-      color: #D81B60; /* Pinkish accent for deals */
-      line-height: 1;
-    }
-
-    /* Row Hover */
-    tr.rest-row:hover {
-      background: #EEE0D9; /* Slightly different southwestern neutral on hover */
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Atlanta Happy Hour (M–F)</h1>
-
-    <!-- Example Neighborhood: Midtown -->
-    <section class="neighborhood" id="midtown">
-      <div class="neighborhood-header">Midtown</div>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th class="rest-col">Restaurant &amp; Deal</th>
-              <th>M</th>
-              <th>T</th>
-              <th>W</th>
-              <th>T</th>
-              <th>F</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Example Row: 5Church ATL (Wed only) -->
-            <tr class="rest-row" onclick="window.open('https://5churchatlanta.com','_blank')">
-              <td class="rest-info">
-                <div class="rest-header">
-                  <!-- If Clearbit fails, use custom or placeholder image -->
-                  <img class="rest-icon" src="https://5churchatlanta.com/wp-content/uploads/2019/12/5C.png" alt="5Church ATL">
-                  <span class="rest-name">5Church ATL</span>
-                  <!-- Google Maps link icon, line-art style -->
-                  <div class="maps-link"
-                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=5Church+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                      <circle cx="12" cy="10" r="3"/>
-                    </svg>
-                  </div>
-                </div>
-                <span class="overall-deal">3–8pm: 🍸 Fierce &amp; Fab!</span>
-              </td>
-              <td class="day-cell"></td>
-              <td class="day-cell"></td>
-              <td class="day-cell">
-                <div class="checkmark">✔</div>
-                <div class="day-deal">3–8</div>
-              </td>
-              <td class="day-cell"></td>
-              <td class="day-cell"></td>
-            </tr>
-
-            <!-- Another Row: Bar Juniper (Mon-Fri) -->
-            <tr class="rest-row" onclick="window.open('https://barjuniper.com','_blank')">
-              <td class="rest-info">
-                <div class="rest-header">
-                  <img class="rest-icon" src="https://barjuniper.com/wp-content/uploads/2023/01/bar-juniper-logo.png" alt="Bar Juniper">
-                  <span class="rest-name">Bar Juniper</span>
-                  <div class="maps-link"
-                       onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bar+Juniper+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
-                      <circle cx="12" cy="10" r="3"/>
-                    </svg>
-                  </div>
-                </div>
-                <span class="overall-deal">4–6pm: 🥂 Cheers, queen!</span>
-              </td>
-              <td class="day-cell"><div class="checkmark">✔</div></td>
-              <td class="day-cell"><div class="checkmark">✔</div></td>
-              <td class="day-cell"><div class="checkmark">✔</div></td>
-              <td class="day-cell"><div class="checkmark">✔</div></td>
-              <td class="day-cell"><div class="checkmark">✔</div></td>
-            </tr>
-            
-            <!-- Continue adding the rest of the restaurants here,
-                 following the same structure and southwestern pastel vibe. -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Repeat for other neighborhoods (West Midtown, Buckhead, etc.) with
-         <div class="neighborhood-header">Buckhead</div>
-         ...
-    -->
-
-    <p style="font-size: 0.8rem; text-align: center; margin-top: 0.5rem; color: #5A473F;">
-      *As of December 2024 – call or visit each restaurant for up-to-date offers.
-    </p>
-  </div>
-</body>
-</html>
+<table style="width:100%; border-collapse:collapse; font-family: Arial, sans-serif; font-size: 0.95em;">
+  <tr style="background-color: #524942; color: #FFFFFF;">
+    <th style="padding: 8px; width: 100px; text-align:left;">Restaurant</th>
+    <th style="padding: 8px; text-align:left;">½-Price Wine</th>
+    <th style="padding: 8px; text-align:left;">Happy Hour Time</th>
+    <th style="padding: 8px; text-align:left;">Specials</th>
+    <th style="padding: 8px; text-align:left;">Neighborhood</th>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://midtown.5church-atlanta.com" target="_blank">5Church Midtown</a> <a href="https://www.google.com/maps/search/5Church+Midtown+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Wed</td>
+    <td style="padding: 8px;">Mon–Fri 3–5pm</td>
+    <td style="padding: 8px;">“Social Hour” with $6 wines and $4 beers 🍻 at the bar; Wine Wednesdays offer half‑price bottles under $100 🍷 (all evening).</td>
+    <td style="padding: 8px;">Midtown (Colony Square)</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://www.agoracuisine.com" target="_blank">Agora Mediterranean</a> <a href="https://www.google.com/maps/search/Agora+Mediterranean+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Mon</td>
+    <td style="padding: 8px;">Daily 4:30–6:30pm</td>
+    <td style="padding: 8px;">30% off all drinks (wine, beer, cocktails) 🍷🍻, plus 30% off appetizers; Mondays all wine bottles are half off 🍾.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.altatoro.com" target="_blank">AltaToro</a> <a href="https://www.google.com/maps/search/AltaToro+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 3–5pm</td>
+    <td style="padding: 8px;">Weekday happy hour with $6 house wines 🍷 and the signature $8 “Toro Rising” cocktail 🍹, plus discounted Latin bites to pair.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://barcelonawinebar.com" target="_blank">Barcelona Wine Bar (West Midtown)</a> <a href="https://www.google.com/maps/search/Barcelona+Wine+Bar+West+Midtown" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Mon</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">$10 Spanish wine flight 🍷 and $7 select cocktails (tapas-sized!) 🍸 during happy hour. Plus, every Monday after 4pm all bottles of wine are ½ off for wine lovers.</td>
+    <td style="padding: 8px;">West Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://barcelonawinebar.com" target="_blank">Barcelona Wine Bar (Inman Park)</a> <a href="https://www.google.com/maps/search/Barcelona+Wine+Bar+Inman+Park" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Mon</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">$10 tasting flight of Spanish wines 🍷 and $7 mini craft cocktails 🍹 for happy hour. On Mondays from 4pm onward, all wine bottles are half-price to toast the week.</td>
+    <td style="padding: 8px;">Inman Park</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;">Bar Juniper (Hyatt Centric)</td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Hotel lobby bar vibes with $7 wines 🍷 and $8.50 well cocktails 🍸 to help you unwind after work.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;">Bar Margot (Four Seasons)</td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 3–6pm</td>
+    <td style="padding: 8px;">Chic hotel bar offering creative cocktail + appetizer pairings 🤝 from 3–6pm. Sip craft cocktails 🍸 and enjoy chef’s bites in style.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://bastoneatlanta.com" target="_blank">Bastone</a> <a href="https://www.google.com/maps/search/Bastone+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily 4–6pm</td>
+    <td style="padding: 8px;">Aperitivo Hour every day 4–6pm with $8 vermouth cocktails 🍸, $10 select wine pours 🍷, half-price mozzarella bar delights 🧀, and $10 fresh pasta plates 🍝.</td>
+    <td style="padding: 8px;">West Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.buenavidatapas.com" target="_blank">Buena Vida Tapas Bar</a> <a href="https://www.google.com/maps/search/Buena+Vida+Tapas+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Spanish tapas spot pouring $8 craft cocktails 🍹 and $7 glasses of wine 🍷 to make your afternoon muy bien.</td>
+    <td style="padding: 8px;">Old Fourth Ward</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://bullagastrobar.com" target="_blank">Bulla Gastrobar</a> <a href="https://www.google.com/maps/search/Bulla+Gastrobar+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily 3–6:30pm</td>
+    <td style="padding: 8px;">Happy hour every single day! Enjoy $7 Spanish vinos 🍷 (or grab the whole bottle for $28) along with tapas and drink specials in this lively bar de tapas.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://campagnoloatl.com" target="_blank">Campagnolo</a> <a href="https://www.google.com/maps/search/Campagnolo+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Wed</td>
+    <td style="padding: 8px;">Wed 5pm–close</td>
+    <td style="padding: 8px;">“Wine Wednesday” with half-priced bottles of wine 🍾 all Wednesday evening at this cozy Italian trattoria.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://www.chidoandpadres.com" target="_blank">Chido & Padre’s</a> <a href="https://www.google.com/maps/search/Chido+%26+Padre%27s+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Tue–Fri 4–6pm</td>
+    <td style="padding: 8px;">Turn happy hour into a fiesta 🎉: $10 house margaritas ($36 pitchers) 🍹, $9 featured wines 🍷, $5 draft beers 🍺, plus yummy taco bites and queso deals.</td>
+    <td style="padding: 8px;">Buckhead</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://citywinery.com/atlanta" target="_blank">City Winery</a> <a href="https://www.google.com/maps/search/City+Winery+Ponce+City+Market" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Thu 4–6pm</td>
+    <td style="padding: 8px;">$5 wine flights (four tastings) 🍷 Monday–Thursday from 4–6pm – an oenophile’s dream come true at this urban winery!</td>
+    <td style="padding: 8px;">Ponce City Market</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://www.theconsulateatlanta.com" target="_blank">The Consulate</a> <a href="https://www.google.com/maps/search/The+Consulate+Midtown+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Tue–Sun 3:30–6pm</td>
+    <td style="padding: 8px;">A global “Passport Hour” in a swanky lounge: $10 wines 🍷, $13 craft cocktails 🍸, and $7 beers from around the world to transport your taste buds.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.cooksandsoldiers.com" target="_blank">Cooks &amp; Soldiers</a> <a href="https://www.google.com/maps/search/Cooks+%26+Soldiers+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 5–6pm</td>
+    <td style="padding: 8px;">“Pintxo Pote” Basque happy hour on weekdays: $5 gin‑tonics (classic, elderflower, or lemon) 🍸 and $5 Basque cider 🍏 to give your evening a txakoli twist.</td>
+    <td style="padding: 8px;">West Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://www.ecco-atlanta.com" target="_blank">Ecco (Midtown)</a> <a href="https://www.google.com/maps/search/Ecco+Midtown+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Weekday happy hour with European flair 🇪🇺: $7 house cocktails 🍸 and $7 wines by the glass 🍷 to toast “la dolce vita” in Midtown.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.valleatl.com" target="_blank">El Valle</a> <a href="https://www.google.com/maps/search/El+Valle+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Modern Mexican “hora feliz”: $7 house red or white wines 🍷, $9 sangrias 🍹, $9 specialty cocktails of the day, plus discounted gourmet tacos 🌮 and apps.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://elvinedolocal.com" target="_blank">El Viñedo Local</a> <a href="https://www.google.com/maps/search/El+Vinedo+Local+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily 3–5pm</td>
+    <td style="padding: 8px;">Afternoon “Siesta Hour” daily: get a bottle of wine + any 4 tapas for a $45 package deal 🍷🍴 – perfect for unwinding with friends after work.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.emiliostacosandtequila.com" target="_blank">Emilio’s Tacos &amp; Tequila</a> <a href="https://www.google.com/maps/search/Emilio%27s+Tacos+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Daily happy hour with ½-price wines 🍷, $6 house margaritas 🍹, $3 draft beers 🍺, and 50% off apps – a fiesta on a budget!</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="http://www.establishmentatlanta.com" target="_blank">Establishment</a> <a href="https://www.google.com/maps/search/Establishment+Colony+Square+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Thu 4–6pm</td>
+    <td style="padding: 8px;">Legendary “After Work Specials” in a rustic-chic lounge: craft cocktails around $9 🍸 and tasty small plates to help you ease into the evening.</td>
+    <td style="padding: 8px;">Midtown (Colony Square)</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://fadoirishpub.com/atlanta-midtown" target="_blank">Fadó Irish Pub</a> <a href="https://www.google.com/maps/search/Fado+Midtown+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Thu</td>
+    <td style="padding: 8px;">Mon–Thu 2–7pm</td>
+    <td style="padding: 8px;">Thirsty Thursdays (and Mon–Thu happy hours)! Enjoy $8 wines 🍷, $6 pints of beer 🍺, and $7 shareable pub apps. Sláinte! 🇮🇪</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://granaatl.com" target="_blank">Grana</a> <a href="https://www.google.com/maps/search/Grana+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily 4–6pm</td>
+    <td style="padding: 8px;">Daily Aperitivo Hour: half-priced mozzarella &amp; salumi boards 🧀, $7 antipasti, $10 cocktails 🍹, $10 pastas 🍝, and $12 pizzas 🍕. Mangia!</td>
+    <td style="padding: 8px;">Piedmont Heights</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://iberianpig.com/buckhead" target="_blank">The Iberian Pig (Buckhead)</a> <a href="https://www.google.com/maps/search/Iberian+Pig+Buckhead" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 5–6pm</td>
+    <td style="padding: 8px;">Jamón Happy Hour with $5 red/white sangria 🍷, $5 Spanish wines, and special charcuterie deals (try the jamón Ibérico board for ~$24!) at this trendy tapas bar.</td>
+    <td style="padding: 8px;">Buckhead</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://iberianpig.com/decatur" target="_blank">The Iberian Pig (Decatur)</a> <a href="https://www.google.com/maps/search/Iberian+Pig+Decatur" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 5–6pm</td>
+    <td style="padding: 8px;">Jamón Happy Hour featuring $5 sangrias 🍷 and $5 glasses of wine, plus tapas and cured ham specials – a perfect start to your evening in Decatur’s square.</td>
+    <td style="padding: 8px;">Decatur</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://lingeringshade.com" target="_blank">Lingering Shade</a> <a href="https://www.google.com/maps/search/Lingering+Shade+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Mon &amp; Tue</td>
+    <td style="padding: 8px;">Mon &amp; Tue 4–10pm</td>
+    <td style="padding: 8px;">Wine lovers rejoice: enjoy ½-priced bottles of wine 🍾 every Monday and Tuesday at this Beltline patio bar. Two days of wine bliss to start your week off right! 😉</td>
+    <td style="padding: 8px;">Beltline (O4W)</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://livingstonatlanta.com" target="_blank">The Livingston</a> <a href="https://www.google.com/maps/search/Livingston+Restaurant+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Tue–Fri 4–7pm</td>
+    <td style="padding: 8px;">Glam hotel bar with a generous 4–7pm happy hour (Tue–Fri) featuring classic cocktails for ~$9–$10 🍸 in a historic setting steps from the Fox Theatre 🎭.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://lure-atlanta.com" target="_blank">Lure</a> <a href="https://www.google.com/maps/search/Lure+Midtown+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Weekdays</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Coastal-inspired happy hour in the heart of Midtown: $7 beachy cocktails 🍹 and $7 wines by the glass, plus seafood bites like ceviche and hushpuppies 🐟.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://marlowstavern.com" target="_blank">Marlow’s Tavern</a> <a href="https://www.google.com/maps/search/Marlow%27s+Tavern+Midtown" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">A neighborhood favorite offering $5 house wines 🍷 and $4.50 Michelob Ultra pints 🍺 from 4–6pm to toast the end of your workday.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://missionandmarketatl.com" target="_blank">Mission + Market</a> <a href="https://www.google.com/maps/search/Mission+and+Market+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Fri</td>
+    <td style="padding: 8px;">Fri 3–6pm</td>
+    <td style="padding: 8px;">Kick off the weekend in style: on Fridays 3–6pm this sleek spot offers craft cocktails for $9 🍸 to help you say “TGIF” in the best way.</td>
+    <td style="padding: 8px;">Buckhead</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://thenookatlanta.com" target="_blank">The Nook</a> <a href="https://www.google.com/maps/search/The+Nook+Piedmont+Park" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Mon</td>
+    <td style="padding: 8px;">Mon 4pm–close</td>
+    <td style="padding: 8px;">“Wine-Not Monday” at this park-side tavern: select wine glasses are ½ price all evening 🍷. (Plus join the fun at music bingo 8pm to turn Monday into Funday! 🎉)</td>
+    <td style="padding: 8px;">Midtown (Piedmont Park)</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.northitalia.com/locations/atlanta-ga" target="_blank">North Italia</a> <a href="https://www.google.com/maps/search/North+Italia+Buckhead" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 3–6pm</td>
+    <td style="padding: 8px;">Weekday aperitivo 3–6pm: $7.50 Italian wine pours 🍷 (or $28 per bottle), plus special pricing on scratch-made pizzas 🍕 and small plates. Cin cin!</td>
+    <td style="padding: 8px;">Buckhead (Lenox)</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://olivebistro.com" target="_blank">Olive Bistro</a> <a href="https://www.google.com/maps/search/Olive+Bistro+Midtown" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Mon &amp; Wed</td>
+    <td style="padding: 8px;">Mon &amp; Wed (all day)</td>
+    <td style="padding: 8px;">Cozy Mediterranean café with half-priced house wine bottles on Monday and ½ off ALL wine bottles on Wednesday 🍾. A perfect pairing with hummus and pita – opa! 🎉</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://parktavern.com" target="_blank">Park Tavern</a> <a href="https://www.google.com/maps/search/Park+Tavern+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Wed</td>
+    <td style="padding: 8px;">Wed 4pm–close</td>
+    <td style="padding: 8px;">“Wine Wednesday” at this iconic park-side bar: all bottles of wine are 50% off 🍾 all evening. (Bonus: occasionally $1 drafts pop up for extra mid-week cheer!)</td>
+    <td style="padding: 8px;">Midtown (Piedmont Park)</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://postinowinecafe.com" target="_blank">Postino (West Midtown)</a> <a href="https://www.google.com/maps/search/Postino+West+Midtown" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily until 5pm</td>
+    <td style="padding: 8px;">“5 ’Til 5” happy hour every day: any glass of wine for $6 🍷 and pitchers of beer for $6 🍺 until 5pm. Cheers to that! </td>
+    <td style="padding: 8px;">West Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://postinowinecafe.com" target="_blank">Postino (Buckhead)</a> <a href="https://www.google.com/maps/search/Postino+Buckhead" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily until 5pm</td>
+    <td style="padding: 8px;">All wines $6 by the glass 🍷 and $6 pitchers of beer 🍺 every day until 5pm at this stylish wine café – the same great “5 ’Til 5” deals in a Buckhead setting.</td>
+    <td style="padding: 8px;">Buckhead</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://therepublicsocialhouse.com" target="_blank">Republic Social House</a> <a href="https://www.google.com/maps/search/Republic+Social+House+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">Thu</td>
+    <td style="padding: 8px;">Thu (all day)</td>
+    <td style="padding: 8px;">“Pasta &amp; Wine Thursday” special: select pasta entrées for $10 🍝 and half-priced wine bottles 🍾 all day Thursday (plus $5 Peroni pints) at this friendly Grant Park pub.</td>
+    <td style="padding: 8px;">Grant Park</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.saltwoodatlanta.com" target="_blank">Saltwood (Loews Hotel)</a> <a href="https://www.google.com/maps/search/Saltwood+Loews+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">1st Fri</td>
+    <td style="padding: 8px;">First Fri 5–7pm</td>
+    <td style="padding: 8px;">First Friday Pride Night 🏳️‍🌈 each month: enjoy rainbow-themed specialty cocktails 🍹, festive bites, and a live DJ 🎶 at this chic charcuterie bar (all allies welcome!).</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://www.southcitykitchen.com" target="_blank">South City Kitchen</a> <a href="https://www.google.com/maps/search/South+City+Kitchen+Midtown" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 4–6pm</td>
+    <td style="padding: 8px;">Southern sips and bites: $7 select wines 🍷, $7 SCK Manhattans 🥃, and discounted Southern small plates (yes, fried green tomatoes!) from 4–6pm weekdays.</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;"><a href="https://www.thewhitebullatl.com" target="_blank">The White Bull</a> <a href="https://www.google.com/maps/search/White+Bull+Decatur" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily 4–6pm</td>
+    <td style="padding: 8px;">Italian aperitivo hour every day 4–6pm: $10 craft cocktails 🍸, $9 Italian wines 🍷, $10 house-made pastas 🍝, and chef’s bites ($7–$10) to let you live la dolce vita in Decatur.</td>
+    <td style="padding: 8px;">Decatur</td>
+  </tr>
+  <tr style="background-color: #c9995b;">
+    <td style="padding: 8px;"><a href="https://www.wickedwolfatlanta.com" target="_blank">Wicked Wolf</a> <a href="https://www.google.com/maps/search/Wicked+Wolf+Atlanta" target="_blank">📍</a></td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Daily 4–7pm</td>
+    <td style="padding: 8px;">Howl at the deals: from 4–7pm, **all** signature cocktails are 50% off 🍹 at this lively sports bar. Great drinks, plenty of TVs, and a roaring good time!</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+  <tr style="background-color: #c8e6e5;">
+    <td style="padding: 8px;">Zócalo</td>
+    <td style="padding: 8px;">—</td>
+    <td style="padding: 8px;">Mon–Fri 3–6pm</td>
+    <td style="padding: 8px;">$7 house margaritas 🍹 and $7 sangrias 🍷 from 3–6pm make this Midtown Mexican cantina the perfect spot to say “¡Salud!” after work. 🌮</td>
+    <td style="padding: 8px;">Midtown</td>
+  </tr>
+</table>
