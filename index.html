@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <title>Atlanta Happy Hour (M–F)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Use a modern sans-serif font -->
+  <!-- Modern font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Global reset & minimal padding */
+    /* Global reset & minimal styling */
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -22,62 +22,69 @@
       font-size: 1.4rem;
     }
     .container {
-      max-width: 600px;
+      max-width: 100%;
       margin: auto;
+      padding: 0;
     }
-    /* Neighborhood header – one tight line */
+    /* Neighborhood header: one tight sticky line */
     .neighborhood-header {
       position: sticky;
       top: 0;
-      z-index: 900;
+      z-index: 1000;
       background: #eee;
       padding: 0.3rem 0.5rem;
       font-weight: 700;
       font-size: 1rem;
       border-bottom: 1px solid #ccc;
-      margin-top: 1rem;
+      margin: 0;
     }
-    /* Table wrapper to allow horizontal scroll if needed */
+    /* Table wrapper: no horizontal scroll */
     .table-wrapper {
-      overflow-x: auto;
+      overflow-x: visible;
       border: 1px solid #ddd;
-      border-radius: 4px;
-      background: #fff;
+      border-radius: 2px;
+      margin-top: 0;
     }
     table {
-      border-collapse: collapse;
       width: 100%;
-      table-layout: fixed;
-      min-width: 400px;
+      border-collapse: collapse;
+      table-layout: auto;
     }
-    /* Table header for days – very tight */
-    thead th {
+    /* Table header row for days, sticky immediately below the neighborhood header.
+       Set top to match the neighborhood header’s height (approx 30px) */
+    thead {
+      position: sticky;
+      top: 30px;
+      z-index: 900;
       background: #fafafa;
+    }
+    thead th {
       border-bottom: 1px solid #ddd;
-      font-size: 0.7rem;
-      padding: 0.2rem;
+      font-size: 0.65rem;
+      padding: 0.1rem;
       text-align: center;
+      white-space: nowrap;
     }
     /* First column header */
     thead th.rest-col {
-      width: 150px;
+      width: 35%;
       text-align: left;
       padding-left: 0.4rem;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
-    /* Table body cells */
     tbody td {
       border: 1px solid #eee;
       text-align: center;
       vertical-align: middle;
-      padding: 0.2rem;
-      font-size: 0.7rem;
+      padding: 0.1rem;
+      font-size: 0.65rem;
+      white-space: nowrap;
     }
     /* First column: restaurant info */
     .rest-info {
-      width: 150px;
+      width: 35%;
       text-align: left;
-      padding: 0.3rem 0.4rem;
+      padding: 0.2rem 0.3rem;
       cursor: pointer;
     }
     .rest-header {
@@ -85,19 +92,18 @@
       align-items: center;
     }
     .rest-icon {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 4px;
       margin-right: 4px;
       flex-shrink: 0;
     }
     .rest-name {
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       margin-right: 4px;
     }
     .maps-link {
-      display: inline-block;
       margin-left: auto;
       cursor: pointer;
     }
@@ -116,14 +122,13 @@
       color: #666;
       margin-top: 2px;
     }
-    /* Day cells: very narrow, fixed width */
+    /* Day columns: minimal width for letter and check */
     .day-cell {
-      width: 28px;
-      padding: 0.2rem;
+      width: 12%;
+      padding: 0.1rem;
       text-align: center;
       vertical-align: middle;
     }
-    /* Big, bold check mark */
     .checkmark {
       font-size: 1.2rem;
       font-weight: bold;
@@ -131,12 +136,11 @@
       line-height: 1;
     }
     .day-deal {
-      display: block;
       font-size: 0.65rem;
       color: #d81b60;
       line-height: 1;
     }
-    /* Minimal hover effect for rows */
+    /* Minimal hover effect */
     tr.rest-row:hover {
       background: #f9f9f9;
     }
@@ -169,8 +173,11 @@
                   <img class="rest-icon" src="https://5churchatlanta.com/wp-content/uploads/2019/12/5C.png" alt="5Church ATL">
                   <span class="rest-name">5Church ATL</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=5Church+Atlanta','_blank');">
-                    <!-- Line-art map pin icon (Feather style) -->
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <!-- Line-art map pin icon -->
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">3–8pm: Fierce & Fab!</span>
@@ -192,7 +199,10 @@
                   <img class="rest-icon" src="https://barjuniper.com/wp-content/uploads/2023/01/bar-juniper-logo.png" alt="Bar Juniper">
                   <span class="rest-name">Bar Juniper</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bar+Juniper+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">4–6pm: Cheers, queen!</span>
@@ -211,7 +221,10 @@
                   <img class="rest-icon" src="https://logo.clearbit.com/altatoro.com" alt="Alta Toro">
                   <span class="rest-name">Alta Toro</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Alta+Toro+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">3–5pm: Sip & Slay!</span>
@@ -230,7 +243,10 @@
                   <img class="rest-icon" src="https://logo.clearbit.com/bullagastrobar.com" alt="Bulla Gastrobar">
                   <span class="rest-name">Bulla Gastrobar</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Bulla+Gastrobar+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">3–6:30pm: Wine & dine, babe!</span>
@@ -242,14 +258,17 @@
               <td class="day-cell"><div class="checkmark">✔</div></td>
             </tr>
 
-            <!-- Campagnolo: Only Wed with day-specific deal -->
+            <!-- Campagnolo: Only Wed with ½ off wine -->
             <tr class="rest-row" onclick="window.open('https://campagnoloatlanta.com','_blank')">
               <td class="rest-info">
                 <div class="rest-header">
                   <img class="rest-icon" src="https://logo.clearbit.com/campagnoloatlanta.com" alt="Campagnolo">
                   <span class="rest-name">Campagnolo</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Campagnolo+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">Wed: ½ off wine 🍷</span>
@@ -271,7 +290,10 @@
                   <img class="rest-icon" src="https://logo.clearbit.com/theconsulateatlanta.com" alt="The Consulate">
                   <span class="rest-name">The Consulate</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=The+Consulate+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">3–7pm: Werk it!</span>
@@ -290,7 +312,10 @@
                   <img class="rest-icon" src="https://logo.clearbit.com/eccoatlanta.com" alt="Ecco">
                   <span class="rest-name">Ecco</span>
                   <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=Ecco+Atlanta','_blank');">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24">
+                      <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
                   </div>
                 </div>
                 <span class="overall-deal">4–6pm: Sip, slay, sparkle!</span>
@@ -302,7 +327,7 @@
               <td class="day-cell"><div class="checkmark">✔</div></td>
             </tr>
 
-            <!-- Continue with all remaining Midtown restaurants... -->
+            <!-- Continue adding all remaining Midtown restaurants as needed -->
           </tbody>
         </table>
       </div>
@@ -310,9 +335,11 @@
 
     <!-- Repeat similar sections for West Midtown, Old Fourth Ward, Inman Park, Buckhead, Decatur, Piedmont Heights, BeltLine Eastside, Piedmont Park, Grant Park, etc. -->
 
-    <p style="font-size: 0.65rem; text-align: center; margin-top: 1rem; color: #666;">
+    <p style="font-size: 0.65rem; text-align: center; margin-top: 0.5rem; color: #666;">
       *As of December 2024 – please check with each venue for current offers.
     </p>
   </div>
+
+  <!-- No horizontal scroll is allowed; table layout is fluid -->
 </body>
 </html>
