@@ -15,11 +15,28 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
+// Function to extract the domain from a given URL
+function getDomain(url) {
+  try {
+    return new URL(url).hostname.replace('www.', ''); // Remove 'www.' prefix for cleaner look
+  } catch (error) {
+    return null;
+  }
+}
+
+// Function to generate the favicon URL dynamically
+function getFaviconURL(restaurantURL) {
+  const domain = getDomain(restaurantURL);
+  if (!domain) {
+    return 'https://www.google.com/s2/favicons?sz=64&domain=example.com'; // Default favicon
+  }
+  return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+}
+
 function processData(data) {
   // Group data by Neighborhood
   var neighborhoods = {};
   data.forEach(function(row) {
-    // Ensure your column names match exactly what’s in your CSV header.
     var neighborhood = row.Neighborhood ? row.Neighborhood.trim() : "Uncategorized";
     if (!neighborhoods[neighborhood]) {
       neighborhoods[neighborhood] = [];
@@ -72,15 +89,16 @@ function processData(data) {
     neighborhoods[neighborhood].forEach(function(row) {
       var tr = document.createElement('tr');
       tr.className = 'rest-row';
-      
+
+      // Get the favicon dynamically from the RestaurantURL
+      var faviconURL = getFaviconURL(row.RestaurantURL);
+
       // Create restaurant info cell with two clickable icons:
-      // 1. Homepage (Home icon)
-      // 2. Google Maps (Maps icon)
       var tdInfo = document.createElement('td');
       tdInfo.className = 'rest-info';
       tdInfo.innerHTML = `
         <div class="rest-header">
-          <img class="rest-icon" src="${row.ImageURL}" alt="${row.RestaurantName}">
+          <img class="rest-icon" src="${faviconURL}" alt="${row.RestaurantName}" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com';">
           <span class="rest-name">${row.RestaurantName}</span>
           <div class="icon-links">
             <a class="homepage-link" href="${row.RestaurantURL}" target="_blank" title="Restaurant Homepage" onclick="event.stopPropagation();">
