@@ -160,3 +160,25 @@
     color: #5A473F;
   }
   
+  /* Homepage and Google Maps Link Icons */
+  .icon-links {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  
+  .icon-links a {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon-links svg {
+    width: 20px;
+    height: 20px;
+    stroke: #3A2E2A;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }  
+  

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // CSV URL published from your Google Sheet
+  // CSV URL published from your Google Sheet (make sure it ends with &output=csv)
   var csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
 
   Papa.parse(csvUrl, {
@@ -73,25 +73,27 @@ function processData(data) {
       var tr = document.createElement('tr');
       tr.className = 'rest-row';
       
-      // Row click opens the restaurant URL
-      tr.addEventListener('click', function() {
-        if (row.RestaurantURL) {
-          window.open(row.RestaurantURL, '_blank');
-        }
-      });
-
-      // Restaurant & Deal cell
+      // Create restaurant info cell with two clickable icons:
+      // 1. Homepage (Home icon)
+      // 2. Google Maps (Maps icon)
       var tdInfo = document.createElement('td');
       tdInfo.className = 'rest-info';
       tdInfo.innerHTML = `
         <div class="rest-header">
           <img class="rest-icon" src="${row.ImageURL}" alt="${row.RestaurantName}">
           <span class="rest-name">${row.RestaurantName}</span>
-          <div class="maps-link" onclick="event.stopPropagation(); window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(row.RestaurantName)}+Atlanta','_blank');">
-            <svg viewBox="0 0 24 24">
-              <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
+          <div class="icon-links">
+            <a class="homepage-link" href="${row.RestaurantURL}" target="_blank" title="Restaurant Homepage" onclick="event.stopPropagation();">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4h-2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+              </svg>
+            </a>
+            <a class="maps-link" href="${row.MapsURL ? row.MapsURL : ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(row.RestaurantName) + '+Atlanta')}" target="_blank" title="Google Maps" onclick="event.stopPropagation();">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </a>
           </div>
         </div>
         <span class="overall-deal">${row.Deal}</span>
