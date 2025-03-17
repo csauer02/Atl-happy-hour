@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Use your published Google Sheet URL (replace /edit?... with /pubhtml)
-    var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1pRlO32MJA39BaAYFvaNBrw4OOP4uBFR8UWWK1pKILu4/pubhtml';
+    var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pubhtml?gid=0&single=true';
   
     Tabletop.init({
       key: publicSpreadsheetUrl,
