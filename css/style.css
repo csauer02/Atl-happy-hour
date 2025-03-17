@@ -1,0 +1,162 @@
+/* Global Reset & Basic Settings */
+* {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 8px;
+    font-family: 'Roboto', sans-serif;
+    background: #F9F1ED; /* Soft dusty pink background */
+    color: #3A2E2A;       /* Warm brownish text */
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  h1 {
+    text-align: center;
+    margin: 0.5rem 0 1rem;
+    font-size: 1.5rem;
+  }
+  .container {
+    max-width: 100%;
+    margin: auto;
+    padding-bottom: 50px;
+    position: relative;
+  }
+  
+  /* Neighborhood Header */
+  .neighborhood-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #C79B7B;
+    color: #fff;
+    padding: 0.4rem 0.6rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #A07A5A;
+    margin: 0;
+  }
+  
+  /* Table container */
+  .table-wrapper {
+    overflow-x: visible;
+    margin-top: 0;
+    border: 3px double #D2B7A6;
+    border-radius: 4px;
+    background: #fff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+  
+  /* Table header styling */
+  thead {
+    position: sticky;
+    top: 2.3rem;
+    z-index: 900;
+    background: #EBD3C6;
+  }
+  thead th {
+    border-bottom: 1px solid #C79B7B;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.2rem;
+    white-space: nowrap;
+  }
+  thead th.rest-col {
+    width: 30%;
+    text-align: left;
+    padding-left: 0.4rem;
+  }
+  
+  /* Alternating Row Colors */
+  tbody tr:nth-child(odd) {
+    background: #F2E7E1;
+  }
+  tbody tr:nth-child(even) {
+    background: #F9F1ED;
+  }
+  tbody td {
+    border: none;
+    padding: 0.3rem 0.2rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  
+  /* Restaurant Info Column */
+  .rest-info {
+    cursor: pointer;
+    padding-left: 0.4rem;
+  }
+  .rest-header {
+    display: flex;
+    align-items: center;
+  }
+  .rest-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+  .rest-name {
+    font-weight: 700;
+    margin-right: 4px;
+    font-size: 1rem;
+  }
+  .maps-link {
+    margin-left: auto;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .maps-link svg {
+    width: 16px;
+    height: 16px;
+    stroke: #3A2E2A;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .overall-deal {
+    display: block;
+    font-size: 0.85rem;
+    color: #5A473F;
+    margin-top: 2px;
+  }
+  
+  /* Day Columns */
+  .day-cell {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.2rem;
+  }
+  .checkmark {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4CAF50;
+    line-height: 1;
+  }
+  .day-deal {
+    display: block;
+    font-size: 0.75rem;
+    color: #D81B60;
+    line-height: 1;
+  }
+  
+  /* Row Hover */
+  tr.rest-row:hover {
+    background: #EEE0D9;
+  }
+  
+  .footer-note {
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    color: #5A473F;
+  }
+  
