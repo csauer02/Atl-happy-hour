@@ -7,16 +7,14 @@
   
   <!-- Modern font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <!-- CSS Stylesheet -->
+  <!-- External CSS file -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- Include Tabletop.js from CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>Atlanta Happy Hour (M–F)</h1>
     
-    <!-- Neighborhood sections will be injected here by main.js -->
+    <!-- This container will be populated with neighborhood sections -->
     <div id="neighborhoods"></div>
     
     <p class="footer-note">
@@ -24,10 +22,9 @@
     </p>
   </div>
   
-  <!-- Include PapaParse from CDN -->
+  <!-- Include PapaParse from CDN (for CSV parsing) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  
-  <!-- Main JavaScript file -->
+  <!-- Your main JavaScript file -->
   <script src="js/main.js"></script>
 </body>
 </html>
