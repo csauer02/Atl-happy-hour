@@ -1,28 +1,25 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // Ensure that your sheet is published. Use the "/pubhtml" version of the URL.
-  var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pubhtml?gid=0&single=true';
+  // CSV URL published from your Google Sheet
+  var csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
 
-  Tabletop.init({
-    key: publicSpreadsheetUrl,
-    callback: processData,
-    simpleSheet: true,
-    debug: true // enables debug logs in the console
+  Papa.parse(csvUrl, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      console.log("CSV Data:", results.data);
+      processData(results.data);
+    },
+    error: function(err) {
+      console.error("Error parsing CSV:", err);
+    }
   });
 });
 
 function processData(data) {
-  console.log("Data fetched from Google Sheet:", data);
-  
-  // If data is empty or undefined, then there may be an issue with accessing the sheet.
-  if (!data || data.length === 0) {
-    console.error("No data was returned. Please check that your Google Sheet is published to the web and that the URL is correct.");
-    return;
-  }
-
   // Group data by Neighborhood
   var neighborhoods = {};
   data.forEach(function(row) {
-    // Ensure your column names exactly match what is in your sheet (e.g., "Neighborhood")
+    // Ensure your column names match exactly what’s in your CSV header.
     var neighborhood = row.Neighborhood ? row.Neighborhood.trim() : "Uncategorized";
     if (!neighborhoods[neighborhood]) {
       neighborhoods[neighborhood] = [];
@@ -30,7 +27,6 @@ function processData(data) {
     neighborhoods[neighborhood].push(row);
   });
 
-  // Container where neighborhood sections will be added
   var container = document.getElementById('neighborhoods');
   container.innerHTML = ""; // Clear any existing content
 
@@ -79,7 +75,7 @@ function processData(data) {
       
       // Row click opens the restaurant URL
       tr.addEventListener('click', function() {
-        if(row.RestaurantURL) {
+        if (row.RestaurantURL) {
           window.open(row.RestaurantURL, '_blank');
         }
       });
@@ -107,8 +103,7 @@ function processData(data) {
       weekdayKeys.forEach(function(day) {
         var td = document.createElement('td');
         td.className = 'day-cell';
-        // If the cell value is "yes", display a checkmark. Otherwise, show any provided text.
-        if(row[day] && row[day].toLowerCase() === "yes") {
+        if (row[day] && row[day].toLowerCase() === "yes") {
           td.innerHTML = '<div class="checkmark">✔</div>';
         } else if (row[day] && row[day].trim() !== "") {
           td.innerHTML = `<div>${row[day]}</div>`;
