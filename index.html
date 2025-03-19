@@ -2,21 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Atlanta Happy Hour – Texas Queer Rodeo Vibe</title>
+  <!-- Updated site title -->
+  <title>Atlanta Happy Hour Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Modern font -->
+  <!-- Import Google Fonts for modern typography -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <!-- External CSS file -->
+  <!-- Link to external CSS file -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Atlanta Happy Hour (M–F)</h1>
+    <!-- Updated header text to match new site name -->
+    <h1>Atlanta Happy Hour Guide</h1>
     
-    <!-- This container will be populated with neighborhood sections -->
+    <!-- New header filter section with toggle for "Happening now" -->
+    <div class="header-filter">
+      <span>Happening now:</span>
+      <!-- Toggle switch styled as an on/off slider -->
+      <label class="switch">
+        <input type="checkbox" id="happening-now-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <!-- This container will be dynamically populated with neighborhood sections and restaurant data -->
     <div id="neighborhoods"></div>
     
+    <!-- Footer note with additional information -->
     <p class="footer-note">
       *As of December 2024 – call or visit each restaurant for up-to-date offers.
     </p>
@@ -24,7 +37,7 @@
   
   <!-- Include PapaParse from CDN (for CSV parsing) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <!-- Your main JavaScript file -->
+  <!-- Link to the main JavaScript file -->
   <script src="js/main.js"></script>
 </body>
 </html>
