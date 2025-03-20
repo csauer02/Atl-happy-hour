@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Atlanta Happy Hour Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Favicon: Using an inline SVG with the 🥂 emoji -->
+  <!-- Favicon: Inline SVG displaying the 🥂 emoji -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E🥂%3C/text%3E%3C/svg%3E">
   <!-- Import Google Fonts (Roboto) -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -12,12 +12,11 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Global Header: Contains site title and "Happening now" toggle.
-       Sticky at the top. The title shrinks instantly (no transition) when scrolled.
-       The header layout is responsive so that in wide mode the title is left-justified
-       and the toggle is right-justified; in narrow mode the toggle wraps below the title. -->
+  <!-- Global Header: Always sticky at the top.
+       Contains the site title (left) and the "Happening now" filter (right). -->
   <div id="global-header">
     <h1>Atlanta Happy Hour Guide</h1>
+    <!-- The filter container is always right justified via CSS -->
     <div class="header-filter">
       <span>Happening now:</span>
       <label class="switch">
@@ -27,10 +26,10 @@
     </div>
   </div>
   
-  <!-- Main Container: Will hold all the dynamically generated neighborhood sections -->
+  <!-- Main Container: Holds dynamically generated neighborhood sections -->
   <div class="container">
     <div id="neighborhoods"></div>
-    <!-- Footer note for additional context -->
+    <!-- Footer note with additional information -->
     <p class="footer-note">
       *As of December 2024 – call or visit each restaurant for up-to-date offers.
     </p>
@@ -38,7 +37,7 @@
   
   <!-- Include PapaParse library for CSV parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <!-- Main JavaScript file handling data fetching, filtering, and UI interactions -->
+  <!-- Main JavaScript file handling data fetching, filtering, and header positioning -->
   <script src="js/main.js"></script>
 </body>
 </html>
