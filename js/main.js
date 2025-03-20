@@ -5,7 +5,7 @@
  * - Fetching and parsing CSV data using PapaParse.
  * - Dynamically generating restaurant tables grouped by neighborhood.
  * - Implementing the "Happening now" filter based on the current weekday.
- * - Managing UI interactions (sticky header shrink on scroll).
+ * - Managing UI interactions, including an instantly shrinking global header on scroll.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
     header: true,
     complete: function(results) {
       console.log("CSV Data:", results.data);
-      // Process the parsed data to generate neighborhood sections and restaurant tables
+      // Process CSV data to generate neighborhood sections and restaurant tables
       processData(results.data);
       // Apply the "Happening now" filter immediately in case the toggle is active
       filterRows();
@@ -28,16 +28,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // Setup the event listener for the "Happening now" toggle filter
+  // Setup event listener for the "Happening now" toggle filter
   const toggleButton = document.getElementById('happening-now-toggle');
   if (toggleButton) {
     toggleButton.addEventListener('change', filterRows);
   }
 
-  // Setup scroll listener to manage the global header shrink effect
+  // Setup scroll listener to manage the global header shrink effect (instant shrink)
   window.addEventListener('scroll', function() {
     var globalHeader = document.getElementById('global-header');
-    // When scrolled more than 50px, add the "pinned" class to shrink header elements
+    // Instantly add the "pinned" class when scrolled more than 50px
     if (window.scrollY > 50) {
       globalHeader.classList.add('pinned');
     } else {
@@ -217,7 +217,7 @@ function processData(data) {
  * On weekends or if the toggle is off, all rows are displayed.
  */
 function filterRows() {
-  // Determine the current weekday (JavaScript getDay(): 0 = Sunday, 1 = Monday, ... 6 = Saturday)
+  // Determine the current weekday (0 = Sunday, 1 = Monday, …, 6 = Saturday)
   let currentDay = new Date().getDay();
   // Only filter for weekdays (Mon-Fri); on weekends, do not filter.
   if (currentDay === 0 || currentDay === 6) {
