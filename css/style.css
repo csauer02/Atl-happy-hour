@@ -15,7 +15,7 @@ body {
 }
 
 /* =================================
-   Container and Heading Styles
+   Container and General Layout
 ================================= */
 .container {
   max-width: 100%;
@@ -26,39 +26,40 @@ body {
 
 /* =================================
    Global Header Styles
-   - Contains the site title and "Happening now" toggle.
-   - Sticky at the top and shrinks on scroll.
+   - Sticky header at the very top containing the site title and filter.
+   - The title now shrinks instantly (no transition delay) when the header is pinned.
+   - Responsive layout: in wide mode, the title is left and the toggle is right;
+   - In narrow mode, the toggle wraps below.
 ================================= */
 #global-header {
   position: sticky;
   top: 0;
   z-index: 1100;
-  background: #F9F1ED; /* Matches body background for seamless look */
+  background: #F9F1ED; /* Same as body background for seamless integration */
   padding: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  transition: all 0.3s;
+  /* Removed transition so the shrink happens instantly */
 }
 
-/* Global Header Title Styles */
 #global-header h1 {
   font-size: 1.5rem;
   margin: 0;
-  transition: font-size 0.3s;
+  /* Transition removed for instant change */
 }
-/* When scrolled (pinned), shrink the title font size */
+
 #global-header.pinned h1 {
   font-size: 1.1rem;
 }
 
-/* Header Filter Styles: Positions the "Happening now" label and toggle */
+/* Header Filter Styles */
 .header-filter {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap; /* Wraps to new line if horizontal space is limited */
+  flex-wrap: wrap;
 }
 
 /* =================================
@@ -108,11 +109,11 @@ body {
 /* =================================
    Neighborhood Header Styles
    - Sticky header for each neighborhood section.
-   - Positioned below the global header.
+   - Always pinned below the global header.
 ================================= */
 .neighborhood-header {
   position: sticky;
-  top: 3rem; /* Adjust offset to appear below the global header */
+  top: 3rem; /* Adjust to position directly below the global header */
   z-index: 1000;
   background: #C79B7B;
   color: #fff;
@@ -141,12 +142,12 @@ table {
 
 /* =================================
    Table Header Styles
-   - Sticky table header to keep weekday labels visible during scrolling.
-   - Offset is set so it does not get squished by the neighborhood header.
+   - Sticky table header (M-F header) now pins relative to the neighborhood header.
+   - The top offset is set to the height of the neighborhood header (3rem).
 ================================= */
 thead {
   position: sticky;
-  top: 4.5rem; /* Adjust based on global header + neighborhood header heights */
+  top: 3rem; /* Now pins to the neighborhood header */
   z-index: 900;
   background: #EBD3C6;
 }
@@ -163,7 +164,7 @@ thead th.rest-col {
   padding-left: 0.4rem;
 }
 
-/* Fixed width for the first column (restaurant info) to maintain consistent alignment */
+/* Fixed width for the first column (restaurant info) to maintain alignment */
 table th:first-child,
 table td:first-child {
   width: 200px;
@@ -172,7 +173,7 @@ table td:first-child {
 
 /* =================================
    Table Body Row Styles
-   - Alternating row colors for improved readability.
+   - Alternating row colors for readability.
 ================================= */
 tbody tr:nth-child(odd) {
   background: #F2E7E1;
