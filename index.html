@@ -2,42 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Updated site title -->
   <title>Atlanta Happy Hour Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Import Google Fonts for modern typography -->
+  <!-- Favicon: Using an SVG with the emoji 🥂 -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E🥂%3C/text%3E%3C/svg%3E">
+  <!-- Import Google Fonts (Roboto) -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <!-- Link to external CSS file -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Updated header text to match new site name -->
+  <!-- Global Header: Contains the site title and "Happening now" toggle.
+       This header is sticky at the top and will shrink when scrolled. -->
+  <div id="global-header">
     <h1>Atlanta Happy Hour Guide</h1>
-    
-    <!-- New header filter section with toggle for "Happening now" -->
     <div class="header-filter">
       <span>Happening now:</span>
-      <!-- Toggle switch styled as an on/off slider -->
       <label class="switch">
         <input type="checkbox" id="happening-now-toggle">
         <span class="slider"></span>
       </label>
     </div>
-    
-    <!-- This container will be dynamically populated with neighborhood sections and restaurant data -->
+  </div>
+  
+  <!-- Main Container: Holds all dynamically generated neighborhood sections and tables -->
+  <div class="container">
     <div id="neighborhoods"></div>
-    
-    <!-- Footer note with additional information -->
+    <!-- Footer note for additional context -->
     <p class="footer-note">
       *As of December 2024 – call or visit each restaurant for up-to-date offers.
     </p>
   </div>
   
-  <!-- Include PapaParse from CDN (for CSV parsing) -->
+  <!-- Include PapaParse library for CSV parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <!-- Link to the main JavaScript file -->
+  <!-- Main JavaScript file handling data fetching, filtering, and UI interactions -->
   <script src="js/main.js"></script>
 </body>
 </html>
