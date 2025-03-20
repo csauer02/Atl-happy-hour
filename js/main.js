@@ -5,23 +5,28 @@
  * - Fetching and parsing CSV data using PapaParse.
  * - Dynamically generating restaurant tables grouped by neighborhood.
  * - Implementing the "Happening now" filter based on the current weekday.
- * - Managing UI interactions, including an instantly shrinking global header on scroll.
+ * - Managing UI interactions including:
+ *   • Instantly shrinking the global header on scroll.
+ *   • Dynamically recalculating header positions so that the neighborhood header and
+ *     table header (M–F) are always pinned directly below the header above them with no gaps.
  */
 
 document.addEventListener("DOMContentLoaded", function() {
   // CSV URL published from your Google Sheet (ensure it ends with &output=csv)
   var csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
 
-  // Parse the CSV data using PapaParse
+  // Parse CSV data using PapaParse
   Papa.parse(csvUrl, {
     download: true,
     header: true,
     complete: function(results) {
       console.log("CSV Data:", results.data);
-      // Process CSV data to generate neighborhood sections and restaurant tables
+      // Generate neighborhood sections and restaurant tables dynamically
       processData(results.data);
       // Apply the "Happening now" filter immediately in case the toggle is active
       filterRows();
+      // Update header positions after content is loaded
+      updateHeaderPositions();
     },
     error: function(err) {
       console.error("Error parsing CSV:", err);
@@ -34,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     toggleButton.addEventListener('change', filterRows);
   }
 
-  // Setup scroll listener to manage the global header shrink effect (instant shrink)
+  // Setup scroll listener to manage the global header shrink effect and update header positions instantly
   window.addEventListener('scroll', function() {
     var globalHeader = document.getElementById('global-header');
     // Instantly add the "pinned" class when scrolled more than 50px
@@ -43,7 +48,11 @@ document.addEventListener("DOMContentLoaded", function() {
     } else {
       globalHeader.classList.remove('pinned');
     }
+    updateHeaderPositions();
   });
+
+  // Update header positions on window resize (to recalculate heights dynamically)
+  window.addEventListener('resize', updateHeaderPositions);
 });
 
 /**
@@ -201,7 +210,7 @@ function processData(data) {
       tbody.appendChild(tr);
     });
 
-    // Finalize the table structure and append the section to the main container
+    // Finalize table structure and append the section to the main container
     table.appendChild(tbody);
     tableWrapper.appendChild(table);
     section.appendChild(tableWrapper);
@@ -237,6 +246,34 @@ function filterRows() {
     } else {
       // If toggle is off or it's the weekend, show all rows
       row.style.display = '';
+    }
+  });
+}
+
+/**
+ * updateHeaderPositions
+ * 
+ * Dynamically calculates and sets the top offsets for the sticky headers so that:
+ * - The neighborhood header is pinned exactly below the global header.
+ * - The table header (M–F) is pinned exactly below its neighborhood header.
+ * This ensures there are no gaps between any of the pinned header rows.
+ */
+function updateHeaderPositions() {
+  // Get the current height of the global header (which may change when pinned)
+  const globalHeader = document.getElementById('global-header');
+  const globalHeaderHeight = globalHeader.offsetHeight;
+  
+  // For each neighborhood header, set its top offset to be equal to the global header's height
+  const neighborhoodHeaders = document.querySelectorAll('.neighborhood-header');
+  neighborhoodHeaders.forEach(nh => {
+    nh.style.top = globalHeaderHeight + 'px';
+    // Get the height of the neighborhood header
+    const nhHeight = nh.offsetHeight;
+    // In the same section, find the table header (thead) and set its top offset
+    const section = nh.parentElement;
+    const thead = section.querySelector('thead');
+    if (thead) {
+      thead.style.top = (globalHeaderHeight + nhHeight) + 'px';
     }
   });
 }
