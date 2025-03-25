@@ -117,7 +117,7 @@ body {
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 440px 1rem 1rem; /* Top padding: header + map heights + some spacing */
+  padding: 440px 1rem 1rem; /* Top padding: header + map heights + spacing */
 }
 
 /* Neighborhood Grouping Section */
@@ -192,21 +192,6 @@ body {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-/* Info Window Content */
-.info-window {
-  font-family: 'Roboto', sans-serif;
-  max-width: 250px;
-}
-.info-window h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
-  color: #750787;
-}
-.info-window p {
-  margin: 0.25rem 0;
-  font-size: 0.9rem;
 }
 
 /* Footer */
