@@ -1,13 +1,12 @@
 /**
  * Main JavaScript File
  *
- * - Loads CSV from Google Sheets.
- * - Sorts & groups by neighborhood.
- * - Desktop: Renders a sidebar with sticky neighborhood headers and vertical card list.
- * - Mobile: Renders a bottom carousel, one card per slide, with left/right arrows.
- * - Google Map with low-opacity markers. Clicking card or marker highlights that restaurant.
- * - Neighborhood header click => fitBounds to show all pins in that neighborhood (desktop).
- * - Day filters & "Happening Now" toggle.
+ * Fixes:
+ *  - "getFaviconURL is not defined" by defining it below.
+ *  - "Google Maps JavaScript API has been loaded directly..." => now using async defer in HTML.
+ *  - Day filter overflow => wrap or scroll.
+ *  - Shrinks the mobile carousel height to 150px.
+ *  - Removed any references to "Atlanta Socializers Happy Hour Guide" in the list.
  */
 
 let map;
@@ -16,8 +15,9 @@ let allRestaurants = [];
 const markerMap = {}; // key: restaurant.id => google.maps.Marker
 // For the mobile carousel
 let currentSlideIndex = 0;
-let slidesData = []; // Each element is { neighborhood, restaurantObj }
+let slidesData = []; // Each element is { neighborhood, restaurant }
 
+// Initialize Map
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 33.7490, lng: -84.3880 },
@@ -29,16 +29,14 @@ function initMap() {
   loadCSVData();
 }
 
-/**
- * loadCSVData
- * Loads CSV, sorts by neighborhood, assigns unique IDs, then calls render functions.
- */
+// Load CSV from Google Sheets
 function loadCSVData() {
   const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
   Papa.parse(csvUrl, {
     download: true,
     header: true,
     complete: (results) => {
+      // Sort by neighborhood
       const data = results.data.sort((a, b) => {
         const nA = (a.Neighborhood || '').toLowerCase();
         const nB = (b.Neighborhood || '').toLowerCase();
@@ -50,7 +48,7 @@ function loadCSVData() {
       allRestaurants = data;
       renderDesktopView();
       renderMobileCarousel();
-      applyFilters(); // apply initial filters
+      applyFilters();
     },
     error: (err) => {
       console.error('Error parsing CSV:', err);
@@ -59,12 +57,11 @@ function loadCSVData() {
 }
 
 /* ================================
-   DESKTOP VIEW RENDERING
+   DESKTOP VIEW
 ================================ */
 function renderDesktopView() {
   const container = document.getElementById('venue-container');
-  if (!container) return; // in case no sidebar
-
+  if (!container) return; // if no sidebar present
   container.innerHTML = '';
 
   // Group by neighborhood
@@ -75,16 +72,15 @@ function renderDesktopView() {
     groups[nb].push(r);
   });
 
-  // Build sections for each neighborhood
+  // Build sections
   for (const neighborhood in groups) {
     const section = document.createElement('div');
     section.className = 'neighborhood-section';
 
-    // Sticky neighborhood header
+    // Sticky header
     const nbHeader = document.createElement('div');
     nbHeader.className = 'neighborhood-header';
     nbHeader.textContent = neighborhood;
-    // Fit bounds on click
     nbHeader.addEventListener('click', () => {
       const bounds = new google.maps.LatLngBounds();
       groups[neighborhood].forEach(r => {
@@ -99,13 +95,12 @@ function renderDesktopView() {
     });
     section.appendChild(nbHeader);
 
-    // Cards
     const contentDiv = document.createElement('div');
     contentDiv.className = 'neighborhood-content';
+
     groups[neighborhood].forEach(restaurant => {
       const card = createRestaurantCard(restaurant);
       contentDiv.appendChild(card);
-      // Create marker if not already
       createOrUpdateMarker(restaurant);
     });
 
@@ -115,24 +110,20 @@ function renderDesktopView() {
 }
 
 /* ================================
-   MOBILE CAROUSEL RENDERING
-   - One "slide" per restaurant
-   - Each slide shows Neighborhood + 1 Card
+   MOBILE CAROUSEL
 ================================ */
 function renderMobileCarousel() {
   const carousel = document.getElementById('mobile-carousel');
-  if (!carousel) return; // in case no mobile container
-
+  if (!carousel) return; // no mobile container
   const slidesContainer = document.getElementById('carousel-slides');
   slidesContainer.innerHTML = '';
+  slidesData = [];
 
-  // Build an array of slides data
   allRestaurants.forEach(r => {
     const nb = r.Neighborhood ? r.Neighborhood.trim() : 'Uncategorized';
     slidesData.push({ neighborhood: nb, restaurant: r });
   });
 
-  // Render each slide
   slidesData.forEach((item, idx) => {
     const slide = document.createElement('div');
     slide.className = 'carousel-slide';
@@ -144,17 +135,17 @@ function renderMobileCarousel() {
     nbLabel.textContent = item.neighborhood;
     slide.appendChild(nbLabel);
 
-    // Restaurant card
+    // Card
     const card = createRestaurantCard(item.restaurant, true /* isMobile */);
     slide.appendChild(card);
 
     slidesContainer.appendChild(slide);
 
-    // Also create marker if not done yet
+    // Marker
     createOrUpdateMarker(item.restaurant);
   });
 
-  // Set up arrow clicks
+  // Carousel arrow events
   document.getElementById('carousel-left').addEventListener('click', () => {
     prevSlide();
   });
@@ -162,7 +153,6 @@ function renderMobileCarousel() {
     nextSlide();
   });
 
-  // Show the first slide
   updateCarouselPosition();
 }
 
@@ -184,7 +174,7 @@ function updateCarouselPosition() {
 }
 
 /* ================================
-   MARKER CREATION / UPDATE
+   MARKER CREATION
 ================================ */
 function createOrUpdateMarker(restaurant) {
   if (!markerMap[restaurant.id]) {
@@ -202,7 +192,6 @@ function createOrUpdateMarker(restaurant) {
           }
         });
         markerMap[restaurant.id] = marker;
-        // Click => highlight
         marker.addListener('click', () => {
           selectRestaurant(restaurant.id);
         });
@@ -213,7 +202,6 @@ function createOrUpdateMarker(restaurant) {
 
 /* ================================
    CREATE RESTAURANT CARD
-   - If isMobile, smaller styling
 ================================ */
 function createRestaurantCard(restaurant, isMobile = false) {
   const card = document.createElement('div');
@@ -223,9 +211,7 @@ function createRestaurantCard(restaurant, isMobile = false) {
   // Favicon
   const faviconURL = getFaviconURL(restaurant.RestaurantURL);
 
-  // Adjust some sizing if mobile, optional
   const iconSize = isMobile ? 40 : 48;
-
   card.innerHTML = `
     <div class="restaurant-left">
       <div class="restaurant-top">
@@ -253,7 +239,6 @@ function createRestaurantCard(restaurant, isMobile = false) {
     </div>
   `;
 
-  // On click => highlight
   card.addEventListener('click', () => {
     selectRestaurant(restaurant.id);
   });
@@ -261,10 +246,21 @@ function createRestaurantCard(restaurant, isMobile = false) {
   return card;
 }
 
+/**
+ * getFaviconURL
+ * Returns a Google S2 favicon URL for a given domain
+ */
+function getFaviconURL(url) {
+  try {
+    const domain = new URL(url).hostname.replace('www.', '');
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+  } catch (error) {
+    return 'https://www.google.com/s2/favicons?sz=64&domain=example.com';
+  }
+}
+
 /* ================================
-   SELECTION LOGIC
-   - Dims all markers except selected => opacity=1
-   - Scrolls to the card in desktop or mobile
+   RESTAURANT SELECTION
 ================================ */
 function selectRestaurant(selectedId) {
   // Markers
@@ -279,22 +275,21 @@ function selectRestaurant(selectedId) {
     }
   });
 
-  // Cards (desktop)
+  // Cards (desktop & mobile)
   document.querySelectorAll('.restaurant-card').forEach(card => {
     card.classList.remove('selected');
   });
   const selectedCard = document.querySelector(`.restaurant-card[data-id="${selectedId}"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
-    // If it's in the desktop sidebar, scroll it into view
     if (window.innerWidth > 800) {
-      // Desktop
+      // Desktop => scroll in sidebar
       selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
-      // On mobile, find the slide index
-      const slideIndex = slidesData.findIndex(s => s.restaurant.id === Number(selectedId));
-      if (slideIndex >= 0) {
-        currentSlideIndex = slideIndex;
+      // Mobile => find the slide index, move carousel
+      const idx = slidesData.findIndex(s => s.restaurant.id === Number(selectedId));
+      if (idx >= 0) {
+        currentSlideIndex = idx;
         updateCarouselPosition();
       }
     }
@@ -317,7 +312,6 @@ function applyFilters() {
     filterDays = activeDays;
   }
 
-  // For each restaurant card (both desktop & mobile)
   document.querySelectorAll('.restaurant-card').forEach(card => {
     const id = card.getAttribute('data-id');
     const r = allRestaurants.find(x => String(x.id) === id);
@@ -329,7 +323,7 @@ function applyFilters() {
       });
     }
     card.style.display = show ? '' : 'none';
-    // Also hide marker
+    // Hide/show marker
     const marker = markerMap[id];
     if (marker) {
       marker.setMap(show ? map : null);
@@ -337,7 +331,6 @@ function applyFilters() {
   });
 }
 
-/* Day filter helpers */
 function getActiveDayFilters() {
   const buttons = document.querySelectorAll('#day-filter button');
   let activeDays = [];

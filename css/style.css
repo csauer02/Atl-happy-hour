@@ -32,13 +32,21 @@ html, body {
   padding: 0 1rem;
 }
 
+/* Filter Controls => day filters can wrap or scroll to avoid overflow */
 #filter-controls {
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap; /* allow wrapping on small screens */
+  max-width: 100%;
 }
 
-/* Day Filter Buttons */
+#day-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
 #day-filter button {
   background: #fff;
   border: 1px solid #ccc;
@@ -121,8 +129,8 @@ html, body {
 
 /* ================================
    Map Container
-   - For desktop: occupies right space
-   - For mobile: occupies top portion
+   - For desktop: to the right
+   - For mobile: top portion
 ================================ */
 #map-container {
   position: fixed;
@@ -158,7 +166,6 @@ html, body {
 /* ================================
    Desktop Sidebar (Left)
    - Visible on wide screens
-   - Contains a vertical list of neighborhoods & cards
 ================================ */
 #sidebar {
   position: fixed;
@@ -259,26 +266,25 @@ html, body {
 /* ================================
    Mobile Carousel
    - Hidden on desktop
-   - Shown on narrow screens
 ================================ */
 #mobile-carousel {
-  display: none; /* hidden by default, see media query */
+  display: none; /* hidden by default, show on narrower screens */
   position: fixed;
   left: 0;
   right: 0;
   bottom: 30px; /* just above the footer */
-  height: 220px; /* adjust as needed */
+  height: 150px; /* smaller height */
   background: #fff;
   border-top: 1px solid #ddd;
   z-index: 10;
-  overflow: hidden; /* to hide slides overflow */
+  overflow: hidden;
 }
 #carousel-slides {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   align-items: center;
-  overflow: hidden; /* container for slides */
+  overflow: hidden;
 }
 .carousel-arrow {
   position: absolute;
@@ -286,9 +292,9 @@ html, body {
   transform: translateY(-50%);
   background: rgba(255,255,255,0.8);
   border: none;
-  font-size: 2rem;
-  width: 40px;
-  height: 40px;
+  font-size: 1.8rem;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   z-index: 20;
   border-radius: 50%;
@@ -299,7 +305,7 @@ html, body {
 #carousel-right {
   right: 10px;
 }
-/* Each "slide" has a neighborhood label + 1 card */
+/* Each "slide" => neighborhood label + 1 card */
 .carousel-slide {
   min-width: 100%;
   max-width: 100%;
@@ -315,20 +321,19 @@ html, body {
   color: #fff;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
 }
 .carousel-slide .restaurant-card {
-  width: 90%; /* fit in the slide */
+  width: 90%;
+  margin-bottom: 0;
 }
 
 /* ================================
    Media Queries
    - On narrower screens, hide desktop sidebar & show mobile carousel
-   - Let the map occupy top portion
 ================================ */
 @media (max-width: 800px) {
-  /* Hide desktop sidebar & show mobile carousel */
   #sidebar {
     display: none;
   }
