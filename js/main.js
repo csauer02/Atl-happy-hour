@@ -323,30 +323,87 @@ function applyFilters() {
 
 /* Listeners for Day Filter Buttons & Happening Now Toggle */
 function initFilterListeners() {
-  const buttons = document.querySelectorAll('#day-filter button');
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const day = btn.getAttribute('data-day');
-      if (day === 'all') {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+  const dayButtons = document.querySelectorAll('#day-filter button');
+  const happeningNowToggle = document.getElementById('happening-now-toggle');
+  const allButton = document.querySelector('#day-filter button[data-day="all"]');
+  // Mapping: 1=Mon, 2=Tue, etc.
+  const dayMapping = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' };
+
+  // When the "Happening Now" toggle changes:
+  happeningNowToggle.addEventListener('change', function() {
+    if (this.checked) {
+      // Determine current day (if Mon-Fri)
+      const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon, etc.
+      if (dayMapping[todayIndex]) {
+        dayButtons.forEach(btn => {
+          // Set active only on the current day
+          if (btn.getAttribute('data-day') === dayMapping[todayIndex]) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+        // Remove "all" selection
+        allButton.classList.remove('active');
       } else {
+        // For weekend days, simply clear specific filters (or you might leave "all" active)
+        dayButtons.forEach(btn => btn.classList.remove('active'));
+        allButton.classList.add('active');
+      }
+    } else {
+      // Toggle off: clear all day filters; revert to "All Days"
+      dayButtons.forEach(btn => btn.classList.remove('active'));
+      allButton.classList.add('active');
+    }
+    applyFilters();
+  });
+
+  // When a day filter button is clicked:
+  dayButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const day = btn.getAttribute('data-day');
+
+      if (day === 'all') {
+        // Clear all other selections, ensure "all" is active,
+        // and clear the "Happening Now" toggle.
+        dayButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (happeningNowToggle.checked) {
+          happeningNowToggle.checked = false;
+        }
+      } else {
+        // If any specific day is clicked while "Happening Now" is on, turn it off.
+        if (happeningNowToggle.checked) {
+          happeningNowToggle.checked = false;
+        }
+        // Toggle the selected day button
         btn.classList.toggle('active');
-        let anyActive = Array.from(buttons).some(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'));
-        if (anyActive) {
-          document.querySelector('#day-filter button[data-day="all"]').classList.remove('active');
+        // Remove "all" if any specific day is active
+        const anySpecificActive = Array.from(dayButtons).some(b => 
+          b.getAttribute('data-day') !== 'all' && b.classList.contains('active')
+        );
+        if (anySpecificActive) {
+          allButton.classList.remove('active');
         } else {
-          document.querySelector('#day-filter button[data-day="all"]').classList.add('active');
+          // If none selected, revert to "all"
+          allButton.classList.add('active');
+        }
+
+        // If only the current day is active, automatically set the "Happening Now" toggle
+        const activeDays = Array.from(dayButtons)
+          .filter(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'))
+          .map(b => b.getAttribute('data-day'));
+        const todayIndex = new Date().getDay();
+        const currentDay = dayMapping[todayIndex] || null;
+        if (currentDay && activeDays.length === 1 && activeDays[0] === currentDay) {
+          happeningNowToggle.checked = true;
         }
       }
       applyFilters();
     });
   });
-
-  document.getElementById('happening-now-toggle').addEventListener('change', () => {
-    applyFilters();
-  });
 }
+
 
 // Initialize filter listeners after DOM content loads
 document.addEventListener('DOMContentLoaded', initFilterListeners);
