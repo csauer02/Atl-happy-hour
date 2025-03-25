@@ -11,7 +11,7 @@ html, body {
   color: #333;
 }
 
-/* Global Header: Filters and Toggle */
+/* Global Header: Filters and Toggle (remains fixed at top of the page) */
 #global-header {
   position: fixed;
   top: 0;
@@ -90,7 +90,7 @@ html, body {
 /* Main Content Layout */
 #content {
   display: flex;
-  height: calc(100% - 60px); /* subtract global header height */
+  height: calc(100% - 60px); /* 60px reserved for the global header */
   margin-top: 60px; /* space for global header */
 }
 
@@ -102,13 +102,16 @@ html, body {
   border-right: 1px solid #ddd;
   position: relative;
 }
+/* Pinned Sidebar Header (Site Title) */
 #sidebar-header {
   position: sticky;
   top: 0;
+  height: 50px;      /* fixed height */
+  line-height: 50px; /* vertically center text */
   background: rgba(255, 255, 255, 0.95);
-  padding: 0.5rem;
   border-bottom: 1px solid #ddd;
   text-align: center;
+  z-index: 20;
 }
 #sidebar-header h1 {
   margin: 0;
@@ -120,16 +123,17 @@ html, body {
   padding: 0.5rem;
 }
 
-/* Neighborhood Group Header (Sticky within Sidebar) */
+/* Neighborhood Header: Sticky below Sidebar Header */
 .neighborhood-header {
   position: sticky;
-  top: 50px; /* below sidebar header */
+  top: 50px;  /* sticks immediately below #sidebar-header */
   background: #750787;
   color: #fff;
   padding: 0.5rem;
   font-weight: bold;
   border-radius: 4px;
   margin-bottom: 0.5rem;
+  z-index: 10;
 }
 
 /* Restaurant Card Layout */
@@ -146,6 +150,10 @@ html, body {
 }
 .restaurant-card:hover {
   background: #f9f1ed;
+}
+/* Persistent darker highlight for selected restaurant */
+.restaurant-card.selected {
+  background: #d0d0d0;  /* adjust as needed for a darker highlight */
 }
 
 /* Left Column of Card */
@@ -237,6 +245,6 @@ footer {
     top: 0;
   }
   .neighborhood-header {
-    top: 40px; /* adjust if needed */
+    top: 50px; /* ensure it sticks below the sidebar header */
   }
 }
