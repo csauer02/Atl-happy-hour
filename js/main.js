@@ -187,7 +187,7 @@ function createOrUpdateMarker(restaurant) {
           map: map,
           opacity: 0.3, // start dim
           icon: {
-            url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
             scaledSize: new google.maps.Size(32, 32)
           }
         });
