@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Atlanta Socializers Happy Hour Guide</title>
+  <title>ATL Happy Hour</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Google Fonts -->
@@ -14,7 +14,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Favicon links (adjust paths as needed) -->
+  <!-- Favicon, etc. (adjust paths) -->
   <link rel="icon" type="image/svg+xml" href="/Atl-happy-hour/favicon.svg" />
   <link rel="icon" type="image/png" href="/Atl-happy-hour/favicon-96x96.png" sizes="96x96" />
   <link rel="shortcut icon" href="/Atl-happy-hour/favicon.ico" />
@@ -22,19 +22,7 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Left Frame (Sidebar) spanning full height -->
-  <div id="sidebar">
-    <!-- Title Card: Always visible at the top of the sidebar -->
-    <div id="sidebar-title-card">
-      <h1>Atlanta Socializers Happy Hour Guide</h1>
-    </div>
-    <!-- Container for all neighborhoods & restaurant cards -->
-    <div id="venue-container">
-      <!-- JS will inject your neighborhood headers & restaurant cards here -->
-    </div>
-  </div>
-
-  <!-- Fixed Global Header: Day Filters & "Happening Now" -->
+  <!-- Fixed Global Header -->
   <header id="global-header">
     <div id="filter-controls">
       <div id="day-filter">
@@ -48,6 +36,7 @@
       <div class="happening-now">
         <span>Happening Now:</span>
         <label class="switch">
+          <!-- narrower input for mobile to avoid overflow -->
           <input type="checkbox" id="happening-now-toggle" />
           <span class="slider"></span>
         </label>
@@ -55,17 +44,33 @@
     </div>
   </header>
 
-  <!-- Map Container: fills space between header & footer, to the right of sidebar -->
+  <!-- Desktop Sidebar (visible only on wide screens) -->
+  <div id="sidebar">
+    <!-- Container for all neighborhoods & restaurant cards (vertical list) -->
+    <div id="venue-container">
+      <!-- JS will inject neighborhood headers & cards here (for desktop) -->
+    </div>
+  </div>
+
+  <!-- Map Container: Occupies top portion on mobile, right portion on desktop -->
   <div id="map-container">
     <!-- Favicon overlay on map (70% white background) -->
     <div id="map-favicon-overlay">
-      <!-- Adjust image src path as needed -->
       <img src="/Atl-happy-hour/favicon-96x96.png" alt="Site Favicon" />
     </div>
     <div id="map"></div>
   </div>
 
-  <!-- Fixed Footer: single line of text -->
+  <!-- Mobile Carousel (hidden on desktop) -->
+  <div id="mobile-carousel">
+    <button id="carousel-left" class="carousel-arrow">‹</button>
+    <div id="carousel-slides">
+      <!-- JS will inject a series of “slides,” each containing [Neighborhood + 1 Restaurant Card] -->
+    </div>
+    <button id="carousel-right" class="carousel-arrow">›</button>
+  </div>
+
+  <!-- Fixed Footer -->
   <footer id="global-footer">
     <p>As of March 2025 – call or visit each restaurant for up-to-date offers.</p>
   </footer>
@@ -73,7 +78,7 @@
   <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
-  <!-- Load Google Maps asynchronously with callback -->
+  <!-- Google Maps (async) -->
   <script
     async
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"

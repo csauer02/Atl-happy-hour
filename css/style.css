@@ -15,48 +15,12 @@ html, body {
 }
 
 /* ================================
-   Left Frame (Sidebar)
-   - Occupies a fixed width
-   - Stretches top to bottom
-   - Scrollable if content is tall
-================================ */
-#sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 320px; /* Adjust as needed */
-  background: #fff;
-  border-right: 1px solid #ddd;
-  overflow-y: auto; /* Scroll if needed */
-  z-index: 10;
-}
-
-/* Title Card at the top of the sidebar */
-#sidebar-title-card {
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-  padding: 1rem;
-}
-#sidebar-title-card h1 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-/* Container for neighborhoods & restaurant cards */
-#venue-container {
-  padding: 1rem;
-}
-
-/* ================================
-   Fixed Global Header (Filters)
-   - Spans from left=320px to right=0
-   - Height: 60px
+   Fixed Global Header
 ================================ */
 #global-header {
   position: fixed;
   top: 0;
-  left: 320px;
+  left: 0;
   right: 0;
   height: 60px;
   background: #fff;
@@ -68,34 +32,40 @@ html, body {
   padding: 0 1rem;
 }
 
-/* Filter Controls */
 #filter-controls {
   display: flex;
   gap: 1rem;
   align-items: center;
 }
+
+/* Day Filter Buttons */
 #day-filter button {
   background: #fff;
   border: 1px solid #ccc;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.7rem;
   border-radius: 20px;
   cursor: pointer;
+  font-size: 0.85rem;
 }
 #day-filter button.active {
   background: #333;
   color: #fff;
 }
+
+/* "Happening Now" Toggle Switch */
 .happening-now {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  font-size: 0.85rem;
 }
-/* Toggle Switch */
+
+/* Slightly narrower switch to avoid overflow on mobile */
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 24px;
+  width: 42px; /* narrower */
+  height: 22px;
 }
 .switch input {
   opacity: 0;
@@ -108,12 +78,12 @@ html, body {
   top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
-  border-radius: 24px;
+  border-radius: 22px;
 }
 .slider:before {
   content: "";
   position: absolute;
-  height: 18px; width: 18px;
+  height: 16px; width: 16px;
   left: 3px; bottom: 3px;
   background-color: white;
   transition: 0.4s;
@@ -123,21 +93,43 @@ html, body {
   background-color: #4CAF50;
 }
 .switch input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(20px);
+}
+
+/* ================================
+   Fixed Footer
+================================ */
+#global-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: #f1f1f1;
+  border-top: 1px solid #ddd;
+  z-index: 1000;
+  text-align: center;
+  line-height: 30px;
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+  padding: 0;
+}
+#global-footer p {
+  margin: 0;
 }
 
 /* ================================
    Map Container
-   - Occupies remaining space
-   - pinned between header & footer
-   - from left=320px to right=0
+   - For desktop: occupies right space
+   - For mobile: occupies top portion
 ================================ */
 #map-container {
   position: fixed;
-  top: 60px;    /* below the header */
-  left: 320px;  /* to the right of sidebar */
+  top: 60px; /* below header */
+  bottom: 30px; /* above footer */
+  left: 320px; /* default for desktop, overridden on mobile */
   right: 0;
-  bottom: 30px; /* above the footer */
   background: #eee;
   overflow: hidden;
   z-index: 1;
@@ -164,37 +156,31 @@ html, body {
 }
 
 /* ================================
-   Fixed Footer
-   - Single line of text
+   Desktop Sidebar (Left)
+   - Visible on wide screens
+   - Contains a vertical list of neighborhoods & cards
 ================================ */
-#global-footer {
+#sidebar {
   position: fixed;
-  bottom: 0;
-  left: 320px;
-  right: 0;
-  height: 30px;
-  background: #f1f1f1;
-  border-top: 1px solid #ddd;
-  z-index: 1000;
-  text-align: center;
-  line-height: 30px;
-  font-size: 0.9rem;
-  color: #555;
-  margin: 0;
-  padding: 0;
-}
-#global-footer p {
-  margin: 0; /* so it fits on one line */
+  top: 60px;
+  bottom: 30px;
+  left: 0;
+  width: 320px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  z-index: 10;
 }
 
-/* ================================
-   Neighborhood Headers
-   - Sticky within the sidebar
-   - pinned below the title card
-================================ */
+/* Container for desktop restaurant listing */
+#venue-container {
+  padding: 1rem;
+}
+
+/* Neighborhood Headers in desktop mode */
 .neighborhood-header {
   position: sticky;
-  top: 0; /* or some offset if you want it below the title card’s space */
+  top: 0;
   background: #750787;
   color: #fff;
   padding: 0.5rem;
@@ -202,11 +188,10 @@ html, body {
   margin-bottom: 0.5rem;
   border-radius: 4px;
   z-index: 5;
+  font-size: 0.9rem;
 }
 
-/* ================================
-   Restaurant Card Layout
-================================ */
+/* Restaurant Card (desktop) */
 .restaurant-card {
   display: flex;
   justify-content: space-between;
@@ -221,12 +206,9 @@ html, body {
 .restaurant-card:hover {
   background: #f9f1ed;
 }
-/* Persistent darker highlight when selected */
 .restaurant-card.selected {
   background: #d0d0d0;
 }
-
-/* Left portion of the card */
 .restaurant-left {
   flex: 1;
 }
@@ -237,7 +219,7 @@ html, body {
 }
 .restaurant-top h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #750787;
 }
 .icon-links {
@@ -249,8 +231,8 @@ html, body {
   color: #e40303;
 }
 .icon-links svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke: #333;
   fill: none;
   stroke-width: 2;
@@ -259,18 +241,14 @@ html, body {
 }
 .restaurant-deal p {
   margin: 0.25rem 0 0 0;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
-
-/* Right portion: Favicon square */
 .restaurant-right {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-left: 0.75rem;
   overflow: hidden;
-  margin-left: 1rem;
+  border-radius: 4px;
 }
 .restaurant-right img {
   width: 100%;
@@ -279,10 +257,87 @@ html, body {
 }
 
 /* ================================
-   Mobile Adjustments
-   (If desired, adapt to your preference)
+   Mobile Carousel
+   - Hidden on desktop
+   - Shown on narrow screens
 ================================ */
-@media (max-width: 600px) {
-  /* You could place the sidebar at bottom or let it remain pinned. */
-  /* For now, we'll keep it pinned. Adjust as needed for your design. */
+#mobile-carousel {
+  display: none; /* hidden by default, see media query */
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 30px; /* just above the footer */
+  height: 220px; /* adjust as needed */
+  background: #fff;
+  border-top: 1px solid #ddd;
+  z-index: 10;
+  overflow: hidden; /* to hide slides overflow */
+}
+#carousel-slides {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* container for slides */
+}
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 20;
+  border-radius: 50%;
+}
+#carousel-left {
+  left: 10px;
+}
+#carousel-right {
+  right: 10px;
+}
+/* Each "slide" has a neighborhood label + 1 card */
+.carousel-slide {
+  min-width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+.carousel-slide .neighborhood-label {
+  background: #750787;
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+.carousel-slide .restaurant-card {
+  width: 90%; /* fit in the slide */
+}
+
+/* ================================
+   Media Queries
+   - On narrower screens, hide desktop sidebar & show mobile carousel
+   - Let the map occupy top portion
+================================ */
+@media (max-width: 800px) {
+  /* Hide desktop sidebar & show mobile carousel */
+  #sidebar {
+    display: none;
+  }
+  #mobile-carousel {
+    display: block;
+  }
+  /* Let map fill from top=60px to bottom=30px, full width */
+  #map-container {
+    left: 0; /* no sidebar */
+    width: 100%;
+  }
 }
