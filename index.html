@@ -19,10 +19,17 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Pinned Header -->
-  <header id="main-header">
-    <div class="header-top">
-      <h1>Atlanta Socializers Happy Hour Guide</h1>
+  <!-- Global Header: Day filters and Happening Now toggle -->
+  <header id="global-header">
+    <div id="filter-controls">
+      <div id="day-filter">
+        <button data-day="all" class="active">All Days</button>
+        <button data-day="mon">Monday</button>
+        <button data-day="tue">Tuesday</button>
+        <button data-day="wed">Wednesday</button>
+        <button data-day="thu">Thursday</button>
+        <button data-day="fri">Friday</button>
+      </div>
       <div class="happening-now">
         <span>Happening Now:</span>
         <label class="switch">
@@ -31,22 +38,24 @@
         </label>
       </div>
     </div>
-    <div id="day-filter">
-      <button data-day="all" class="active">All Days</button>
-      <button data-day="mon">Monday</button>
-      <button data-day="tue">Tuesday</button>
-      <button data-day="wed">Wednesday</button>
-      <button data-day="thu">Thursday</button>
-      <button data-day="fri">Friday</button>
-    </div>
   </header>
 
-  <!-- Pinned Google Map -->
-  <div id="map"></div>
+  <!-- Main content: Sidebar with restaurant cards and Map -->
+  <div id="content">
+    <!-- Sidebar: Restaurant Cards -->
+    <aside id="sidebar">
+      <div id="sidebar-header">
+        <h1>Atlanta Socializers Happy Hour Guide</h1>
+      </div>
+      <div id="venue-container">
+        <!-- Restaurant groups (by neighborhood) will be dynamically injected here -->
+      </div>
+    </aside>
 
-  <!-- Main Content Container -->
-  <div class="container" id="venue-container">
-    <!-- Restaurant groups by neighborhood will be dynamically injected here -->
+    <!-- Map Container -->
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
   </div>
 
   <!-- Footer -->
@@ -56,11 +65,10 @@
     </p>
   </footer>
 
-  <!-- PapaParse Library -->
+  <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <!-- Your Custom JS -->
   <script src="js/main.js"></script>
-  <!-- Load Google Maps asynchronously with a callback -->
+  <!-- Load Google Maps asynchronously with callback -->
   <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"></script>
 </body>
 </html>

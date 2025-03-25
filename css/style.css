@@ -2,41 +2,51 @@
 * {
   box-sizing: border-box;
 }
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: 'Roboto', sans-serif;
   background-color: #f1e0c6;  /* warm tan background */
   color: #333;
 }
 
-/* Pinned Header */
-#main-header {
+/* Global Header: Filters and Toggle */
+#global-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1200;
-  background: linear-gradient(to right, #e40303, #ff8c00, #ffed00, #008026, #004dff, #750787);
-  color: #fff;
+  z-index: 1000;
+  background: #fff;
   padding: 0.5rem 1rem;
-}
-.header-top {
+  border-bottom: 1px solid #ddd;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
-#main-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  text-transform: uppercase;
+#filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+#day-filter button {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+}
+#day-filter button.active {
+  background: #333;
+  color: #fff;
 }
 .happening-now {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
-/* Toggle Switch Styles */
+/* Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -77,69 +87,49 @@ body {
   transform: translateX(26px);
 }
 
-/* Day Filter Buttons */
-#day-filter {
-  margin-top: 0.5rem;
+/* Main Content Layout */
+#content {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-#day-filter button {
-  background: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  color: #333;
-  cursor: pointer;
-  border-radius: 20px;
-  font-weight: bold;
-  transition: transform 0.2s;
-}
-#day-filter button:hover {
-  transform: scale(1.05);
-}
-#day-filter button.active {
-  background: #333;
-  color: #fff;
+  height: calc(100% - 60px); /* subtract global header height */
+  margin-top: 60px; /* space for global header */
 }
 
-/* Pinned Map (below header) */
-#map {
-  position: fixed;
-  top: 120px; /* Adjust to account for header height */
-  left: 0;
-  width: 100%;
-  height: 300px;
-  z-index: 1100;
+/* Sidebar: Restaurant Cards (Fixed Width on Desktop) */
+#sidebar {
+  width: 320px;
+  background: rgba(255, 255, 255, 0.95);
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+  position: relative;
+}
+#sidebar-header {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+#sidebar-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
 }
 
-/* Main Content Container */
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 440px 1rem 1rem; /* Top padding: header + map heights + spacing */
+/* Venue Container within Sidebar */
+#venue-container {
+  padding: 0.5rem;
 }
 
-/* Neighborhood Grouping Section */
-.neighborhood-section {
-  margin-bottom: 2rem;
-  display: flex;
-}
+/* Neighborhood Group Header (Sticky within Sidebar) */
 .neighborhood-header {
-  flex: 0 0 120px;
+  position: sticky;
+  top: 50px; /* below sidebar header */
   background: #750787;
   color: #fff;
+  padding: 0.5rem;
   font-weight: bold;
-  padding: 1rem;
-  text-transform: uppercase;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 440px; /* same as container top padding */
-  align-self: flex-start;
-}
-.neighborhood-content {
-  flex: 1;
-  padding-left: 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
 }
 
 /* Restaurant Card Layout */
@@ -154,42 +144,32 @@ body {
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .restaurant-card:hover {
   background: #f9f1ed;
 }
 
-/* Left Column: Text and Icons */
+/* Left Column of Card */
 .restaurant-left {
   flex: 1;
-  margin-right: 1rem;
-  display: flex;
-  flex-direction: column;
 }
-
 .restaurant-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
 }
-
 .restaurant-top h2 {
   margin: 0;
   font-size: 1.1rem;
   color: #750787;
 }
-
 .icon-links {
   display: flex;
   gap: 0.5rem;
 }
-
 .icon-links a {
   text-decoration: none;
   color: #e40303;
 }
-
 .icon-links svg {
   width: 20px;
   height: 20px;
@@ -199,68 +179,64 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-
-/* Deal Description */
 .restaurant-deal p {
   margin: 0.25rem 0 0 0;
   font-size: 0.9rem;
 }
 
-/* Right Column: Favicon Square */
+/* Right Column of Card: Favicon Square */
 .restaurant-right {
-  width: 60px;  /* Adjust size as needed */
+  width: 60px;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  margin-left: 1rem;
 }
-
 .restaurant-right img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-
-/* Footer */
-.footer-note {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #555;
-  margin: 1rem 0;
+/* Map Container: Occupies Remaining Space */
+#map-container {
+  flex: 1;
+  position: relative;
+}
+#map {
+  width: 100%;
+  height: 100%;
 }
 
-/* Responsive Design for Smaller Screens */
+/* Footer Styling */
+footer {
+  text-align: center;
+  padding: 0.5rem;
+  background: #f1f1f1;
+  border-top: 1px solid #ddd;
+}
+
+/* Mobile Styles: Vertical Mode */
 @media (max-width: 600px) {
-  /* Stack header elements */
-  #main-header {
-    padding: 0.5rem;
-  }
-  .header-top {
+  #content {
     flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
   }
-  /* Make the map taller on mobile */
-  #map {
-    height: 250px;
-    top: 100px;
+  /* On mobile, the map goes on top and the sidebar becomes a fixed-height bottom panel */
+  #map-container {
+    height: calc(100% - 200px);
   }
-  .container {
-    padding-top: 360px;
+  #sidebar {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-top: 1px solid #ddd;
   }
-  /* For neighborhood sections, stack the neighborhood header on top */
-  .neighborhood-section {
-    flex-direction: column;
+  #sidebar-header {
+    top: 0;
   }
   .neighborhood-header {
-    position: sticky;
-    top: 360px;
-    width: 100%;
-    text-align: center;
-  }
-  .neighborhood-content {
-    padding-left: 0;
+    top: 40px; /* adjust if needed */
   }
 }
