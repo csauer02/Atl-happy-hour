@@ -145,28 +145,35 @@ function createRestaurantCard(restaurant) {
   // Get favicon URL from restaurant URL
   const faviconURL = getFaviconURL(restaurant.RestaurantURL);
 
+  // Build the card markup with two columns: left for text and icons; right for the favicon image.
   card.innerHTML = `
-    <img class="rest-icon" src="${faviconURL}" alt="${restaurant.RestaurantName}" onerror="this.onerror=null;this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com'">
-    <div class="restaurant-details">
-      <h2>${restaurant.RestaurantName}</h2>
-      <p class="deal">${restaurant.Deal || ''}</p>
-      <div class="icon-links">
-        <a class="homepage-link" href="${restaurant.RestaurantURL}" target="_blank" title="Restaurant Homepage">
-          <svg viewBox="0 0 24 24">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4h-2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
-          </svg>
-        </a>
-        <a class="maps-link" href="${restaurant.MapsURL}" target="_blank" title="Google Maps">
-          <svg viewBox="0 0 24 24">
-            <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-        </a>
+    <div class="restaurant-left">
+      <div class="restaurant-top">
+        <h2>${restaurant.RestaurantName}</h2>
+        <div class="icon-links">
+          <a class="homepage-link" href="${restaurant.RestaurantURL}" target="_blank" title="Restaurant Homepage">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4h-2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+            </svg>
+          </a>
+          <a class="maps-link" href="${restaurant.MapsURL}" target="_blank" title="Google Maps">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </a>
+        </div>
       </div>
+      <div class="restaurant-deal">
+        <p>${restaurant.Deal || ''}</p>
+      </div>
+    </div>
+    <div class="restaurant-right">
+      <img src="${faviconURL}" alt="${restaurant.RestaurantName}" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com'">
     </div>
   `;
 
-  // On hover, make the corresponding marker bounce
+  // Hover: highlight marker (bounce effect)
   card.addEventListener('mouseover', () => {
     const marker = markerMap[restaurant.id];
     if (marker) {
@@ -179,7 +186,7 @@ function createRestaurantCard(restaurant) {
       marker.setAnimation(null);
     }
   });
-  // On click, highlight this marker, dim all others, and zoom/pan to it.
+  // Click: highlight marker (dim others, enlarge this one, pan/zoom to it)
   card.addEventListener('click', () => {
     highlightMarker(restaurant.id);
   });
