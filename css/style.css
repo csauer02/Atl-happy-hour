@@ -1,34 +1,78 @@
-/* Global Reset & Basic Settings */
+/* ================================
+   Global Reset & Basic Settings
+================================ */
 * {
   box-sizing: border-box;
 }
 html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
   height: 100%;
   font-family: 'Roboto', sans-serif;
-  background-color: #f1e0c6;  /* warm tan background */
+  background-color: #f1e0c6; /* Warm tan background */
   color: #333;
 }
 
-/* Global Header: Filters and Toggle (remains fixed at top of the page) */
-#global-header {
+/* ================================
+   Left Frame (Sidebar)
+   - Occupies a fixed width
+   - Stretches top to bottom
+   - Scrollable if content is tall
+================================ */
+#sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  z-index: 1000;
+  bottom: 0;
+  width: 320px; /* Adjust as needed */
   background: #fff;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  border-right: 1px solid #ddd;
+  overflow-y: auto; /* Scroll if needed */
+  z-index: 10;
 }
+
+/* Title Card at the top of the sidebar */
+#sidebar-title-card {
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 1rem;
+}
+#sidebar-title-card h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+/* Container for neighborhoods & restaurant cards */
+#venue-container {
+  padding: 1rem;
+}
+
+/* ================================
+   Fixed Global Header (Filters)
+   - Spans from left=320px to right=0
+   - Height: 60px
+================================ */
+#global-header {
+  position: fixed;
+  top: 0;
+  left: 320px;
+  right: 0;
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 1rem;
+}
+
+/* Filter Controls */
 #filter-controls {
   display: flex;
-  align-items: center;
   gap: 1rem;
+  align-items: center;
 }
 #day-filter button {
   background: #fff;
@@ -61,21 +105,16 @@ html, body {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
   border-radius: 24px;
 }
 .slider:before {
-  position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
+  position: absolute;
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -87,64 +126,87 @@ html, body {
   transform: translateX(26px);
 }
 
-/* Main Content Layout */
-#content {
-  display: flex;
-  height: calc(100% - 60px); /* 60px reserved for the global header */
-  margin-top: 60px; /* space for global header */
+/* ================================
+   Map Container
+   - Occupies remaining space
+   - pinned between header & footer
+   - from left=320px to right=0
+================================ */
+#map-container {
+  position: fixed;
+  top: 60px;    /* below the header */
+  left: 320px;  /* to the right of sidebar */
+  right: 0;
+  bottom: 30px; /* above the footer */
+  background: #eee;
+  overflow: hidden;
+  z-index: 1;
 }
-
-/* Sidebar: Restaurant Cards (Fixed Width on Desktop) */
-#sidebar {
-  width: 320px;
-  background: rgba(255, 255, 255, 0.95);
-  overflow-y: auto;
-  border-right: 1px solid #ddd;
+#map {
+  width: 100%;
+  height: 100%;
   position: relative;
-  /* Optional: add a subtle shadow for depth */
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
-/* Sidebar Header Card: Always visible and styled as a card */
-#sidebar-header {
-  position: sticky;
-  top: 0;
-  height: 60px;           /* fixed height */
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin: 0.5rem;
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* Favicon overlay on map (70% white background) */
+#map-favicon-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.7);
+  padding: 5px;
+  border-radius: 4px;
+  z-index: 10;
 }
-#sidebar-header h1 {
+#map-favicon-overlay img {
+  width: 32px;
+  height: 32px;
+}
+
+/* ================================
+   Fixed Footer
+   - Single line of text
+================================ */
+#global-footer {
+  position: fixed;
+  bottom: 0;
+  left: 320px;
+  right: 0;
+  height: 30px;
+  background: #f1f1f1;
+  border-top: 1px solid #ddd;
+  z-index: 1000;
+  text-align: center;
+  line-height: 30px;
+  font-size: 0.9rem;
+  color: #555;
   margin: 0;
-  font-size: 1.25rem;
+  padding: 0;
+}
+#global-footer p {
+  margin: 0; /* so it fits on one line */
 }
 
-/* Venue Container within Sidebar */
-#venue-container {
-  padding: 0.5rem;
-}
-
-/* Neighborhood Header: Sticky immediately below the sidebar header */
+/* ================================
+   Neighborhood Headers
+   - Sticky within the sidebar
+   - pinned below the title card
+================================ */
 .neighborhood-header {
   position: sticky;
-  top: 70px; /* 60px header height + ~10px margin */
+  top: 0; /* or some offset if you want it below the title card’s space */
   background: #750787;
   color: #fff;
   padding: 0.5rem;
   font-weight: bold;
-  border-radius: 4px;
   margin-bottom: 0.5rem;
-  z-index: 10;
+  border-radius: 4px;
+  z-index: 5;
 }
 
-/* Restaurant Card Layout */
+/* ================================
+   Restaurant Card Layout
+================================ */
 .restaurant-card {
   display: flex;
   justify-content: space-between;
@@ -159,12 +221,12 @@ html, body {
 .restaurant-card:hover {
   background: #f9f1ed;
 }
-/* Persistent darker highlight for selected restaurant */
+/* Persistent darker highlight when selected */
 .restaurant-card.selected {
-  background: #d0d0d0;  /* adjust as needed for a darker highlight */
+  background: #d0d0d0;
 }
 
-/* Left Column of Card */
+/* Left portion of the card */
 .restaurant-left {
   flex: 1;
 }
@@ -200,7 +262,7 @@ html, body {
   font-size: 0.9rem;
 }
 
-/* Right Column of Card: Favicon Square */
+/* Right portion: Favicon square */
 .restaurant-right {
   width: 60px;
   height: 60px;
@@ -216,43 +278,11 @@ html, body {
   object-fit: cover;
 }
 
-/* Map Container: Occupies Remaining Space */
-#map-container {
-  flex: 1;
-  position: relative;
-}
-#map {
-  width: 100%;
-  height: 100%;
-}
-
-/* Footer Styling */
-footer {
-  text-align: center;
-  padding: 0.5rem;
-  background: #f1f1f1;
-  border-top: 1px solid #ddd;
-}
-
-/* Mobile Styles: Vertical Mode */
+/* ================================
+   Mobile Adjustments
+   (If desired, adapt to your preference)
+================================ */
 @media (max-width: 600px) {
-  #content {
-    flex-direction: column;
-  }
-  /* On mobile, the map goes on top and the sidebar becomes a fixed-height bottom panel */
-  #map-container {
-    height: calc(100% - 200px);
-  }
-  #sidebar {
-    width: 100%;
-    height: 200px;
-    border-right: none;
-    border-top: 1px solid #ddd;
-  }
-  #sidebar-header {
-    top: 0;
-  }
-  .neighborhood-header {
-    top: 50px; /* ensure it sticks below the sidebar header */
-  }
+  /* You could place the sidebar at bottom or let it remain pinned. */
+  /* For now, we'll keep it pinned. Adjust as needed for your design. */
 }
