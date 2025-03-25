@@ -1,279 +1,277 @@
 /**
  * Main JavaScript File
  *
- * This script handles:
- * - Fetching and parsing CSV data using PapaParse.
- * - Dynamically generating restaurant tables grouped by neighborhood.
- * - Implementing the "Happening now" filter based on the current weekday.
- * - Managing UI interactions including:
- *   • Instantly shrinking the global header on scroll.
- *   • Dynamically recalculating header positions so that the neighborhood header and
- *     table header (M–F) are always pinned directly below the header above them with no gaps.
+ * Implements:
+ * 1) Fetching and parsing CSV data (PapaParse).
+ * 2) Google Maps with dynamic geocoding of each venue's address.
+ * 3) A day filter (All Days, Monday–Sunday) to show/hide venues.
+ * 4) Updated styling & layout to match the new “Atlanta Socializers” brand.
  */
 
-document.addEventListener("DOMContentLoaded", function() {
-  // CSV URL published from your Google Sheet (ensure it ends with &output=csv)
-  var csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
+document.addEventListener('DOMContentLoaded', init);
 
-  // Parse CSV data using PapaParse
+/**
+ * init
+ * 
+ * Main entry point once DOM is loaded.
+ * - Parses the CSV from Google Sheets.
+ * - Initializes the map.
+ * - Sets up day filter logic.
+ */
+function init() {
+  // CSV URL published from your Google Sheet (ensure it ends with &output=csv)
+  const csvUrl =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
+
   Papa.parse(csvUrl, {
     download: true,
     header: true,
-    complete: function(results) {
-      console.log("CSV Data:", results.data);
-      // Generate neighborhood sections and restaurant tables dynamically
-      processData(results.data);
-      // Apply the "Happening now" filter immediately in case the toggle is active
-      filterRows();
-      // Update header positions after content is loaded
-      updateHeaderPositions();
+    complete: (results) => {
+      console.log('CSV Data:', results.data);
+      window.venuesData = results.data || [];
+      // Initialize the map first (so it's ready to place markers).
+      initMap();
+      // Set up day filter buttons.
+      initDayFilter();
+      // Default to "all" day filter on load.
+      updateUI('all');
     },
-    error: function(err) {
-      console.error("Error parsing CSV:", err);
-    }
+    error: (err) => {
+      console.error('Error parsing CSV:', err);
+    },
   });
-
-  // Setup event listener for the "Happening now" toggle filter
-  const toggleButton = document.getElementById('happening-now-toggle');
-  if (toggleButton) {
-    toggleButton.addEventListener('change', filterRows);
-  }
-
-  // Setup scroll listener to manage the global header shrink effect and update header positions instantly
-  window.addEventListener('scroll', function() {
-    var globalHeader = document.getElementById('global-header');
-    // Instantly add the "pinned" class when scrolled more than 50px
-    if (window.scrollY > 50) {
-      globalHeader.classList.add('pinned');
-    } else {
-      globalHeader.classList.remove('pinned');
-    }
-    updateHeaderPositions();
-  });
-
-  // Update header positions on window resize (to recalculate heights dynamically)
-  window.addEventListener('resize', updateHeaderPositions);
-});
+}
 
 /**
- * getDomain
- * 
- * Extracts the domain name from a given URL and removes any "www." prefix.
+ * initMap
  *
- * @param {string} url - The URL from which to extract the domain.
- * @returns {string|null} - The cleaned domain name or null if invalid.
+ * Initializes the Google Map instance. This function sets a center in Atlanta,
+ * but markers are added dynamically once we geocode each venue.
  */
-function getDomain(url) {
+function initMap() {
+  // Create a map centered on Atlanta.
+  window.map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 33.7490, lng: -84.3880 },
+    zoom: 12,
+  });
+
+  // Pre-initialize a place to store markers so we can clear them on filter changes.
+  window.allMarkers = [];
+}
+
+/**
+ * initDayFilter
+ *
+ * Attaches click listeners to each day filter button, so that when clicked,
+ * the UI is updated to show only venues open on that day.
+ */
+function initDayFilter() {
+  const buttons = document.querySelectorAll('#day-filter button');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      // Remove 'active' class from all buttons
+      buttons.forEach((b) => b.classList.remove('active'));
+      // Add 'active' class to the clicked button
+      btn.classList.add('active');
+      // Update the UI based on the selected day
+      const day = btn.getAttribute('data-day');
+      updateUI(day);
+    });
+  });
+}
+
+/**
+ * updateUI
+ *
+ * Re-renders the list of venues and the map markers based on the chosen day filter.
+ * If `selectedDay` = "all", shows all venues. Otherwise, only shows venues
+ * that are not marked "Closed" (or empty) on that day.
+ *
+ * @param {string} selectedDay - e.g. "all", "monday", "tuesday", ...
+ */
+function updateUI(selectedDay) {
+  const container = document.getElementById('venue-list');
+  container.innerHTML = '';
+
+  // Clear existing markers from the map
+  if (window.allMarkers && window.allMarkers.length) {
+    window.allMarkers.forEach((m) => m.setMap(null));
+  }
+  window.allMarkers = [];
+
+  // Filter the venue data based on the selected day
+  const filteredData = window.venuesData.filter((venue) => {
+    if (selectedDay === 'all') return true;
+    // Check if this venue is "closed" or blank on the chosen day
+    const dayValue = venue[getCsvColumnForDay(selectedDay)] || '';
+    if (!dayValue || dayValue.toLowerCase().includes('closed')) {
+      return false;
+    }
+    return true;
+  });
+
+  // For each venue in the filtered list, create a new HTML block + map marker
+  filteredData.forEach((venue) => {
+    // 1) Create the venue list item
+    const venueDiv = document.createElement('div');
+    venueDiv.classList.add('venue-item');
+
+    // Build day-specific hours string
+    let dayHoursHTML = '';
+    if (selectedDay === 'all') {
+      // Show all days
+      dayHoursHTML = '<ul>';
+      ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach((day) => {
+        const val = venue[day] || '';
+        if (val && !val.toLowerCase().includes('closed')) {
+          dayHoursHTML += `<li><strong>${day}:</strong> ${val}</li>`;
+        }
+      });
+      dayHoursHTML += '</ul>';
+    } else {
+      // Show only the chosen day
+      const chosenDayVal = venue[getCsvColumnForDay(selectedDay)] || '';
+      dayHoursHTML = `<p><strong>${capitalize(selectedDay)}:</strong> ${chosenDayVal}</p>`;
+    }
+
+    // Basic address extraction (just the 'q' param from MapsURL)
+    const address = getAddressFromMapsURL(venue.MapsURL) || '';
+
+    // Build the final HTML
+    venueDiv.innerHTML = `
+      <h2>${venue.RestaurantName || ''}</h2>
+      <p>${address}</p>
+      ${dayHoursHTML}
+      <p><a href="${venue.MapsURL || '#'}" target="_blank">View on Google Maps</a></p>
+    `;
+
+    container.appendChild(venueDiv);
+
+    // 2) Geocode the venue and create a map marker
+    const addressToGeocode = getAddressFromMapsURL(venue.MapsURL);
+    if (addressToGeocode) {
+      geocodeAddress(addressToGeocode, (location) => {
+        if (location) {
+          const marker = new google.maps.Marker({
+            position: location,
+            map: window.map,
+          });
+
+          const infoWindow = new google.maps.InfoWindow({
+            content: createInfoWindowContent(venue),
+          });
+
+          marker.addListener('click', () => {
+            infoWindow.open(window.map, marker);
+          });
+
+          window.allMarkers.push(marker);
+        }
+      });
+    }
+  });
+}
+
+/**
+ * getAddressFromMapsURL
+ *
+ * Extracts the address from a Google Maps URL in the form:
+ *   https://maps.google.com/?q=Some+Address+Here
+ *
+ * @param {string} url - The Maps URL
+ * @returns {string|null} The address string or null
+ */
+function getAddressFromMapsURL(url) {
+  if (!url) return null;
   try {
-    return new URL(url).hostname.replace('www.', '');
-  } catch (error) {
+    const parsed = new URL(url);
+    const params = new URLSearchParams(parsed.search);
+    return params.get('q'); // the address after '?q='
+  } catch (e) {
+    console.warn('Invalid Maps URL:', url);
     return null;
   }
 }
 
 /**
- * getFaviconURL
- * 
- * Generates a favicon URL using Google's favicon service based on the restaurant's URL.
- * Returns a default favicon if the URL is invalid.
+ * geocodeAddress
  *
- * @param {string} restaurantURL - The restaurant homepage URL.
- * @returns {string} - The generated favicon URL.
- */
-function getFaviconURL(restaurantURL) {
-  const domain = getDomain(restaurantURL);
-  if (!domain) {
-    return 'https://www.google.com/s2/favicons?sz=64&domain=example.com';
-  }
-  return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
-}
-
-/**
- * processData
- * 
- * Processes parsed CSV data and dynamically builds restaurant tables grouped by neighborhood.
- * Each restaurant row is assigned a "data-deals" attribute listing the weekdays (Mon-Fri) 
- * when a deal is available (mapped as Monday=1, Tuesday=2, etc.).
+ * Uses the Google Maps Geocoding service to get lat/lng for an address.
  *
- * @param {Array} data - The array of CSV data objects.
+ * @param {string} address - The address to geocode
+ * @param {function} callback - Receives the LatLng result or null on failure
  */
-function processData(data) {
-  // Group CSV data by Neighborhood
-  var neighborhoods = {};
-  data.forEach(function(row) {
-    var neighborhood = row.Neighborhood ? row.Neighborhood.trim() : "Uncategorized";
-    if (!neighborhoods[neighborhood]) {
-      neighborhoods[neighborhood] = [];
-    }
-    neighborhoods[neighborhood].push(row);
-  });
-
-  // Select the container where neighborhood sections will be inserted
-  var container = document.getElementById('neighborhoods');
-  container.innerHTML = ""; // Clear any existing content
-
-  // Loop through each neighborhood to build its section and table
-  Object.keys(neighborhoods).forEach(function(neighborhood) {
-    // Create a section element for the neighborhood
-    var section = document.createElement('section');
-    section.className = 'neighborhood';
-    section.id = neighborhood.toLowerCase().replace(/\s+/g, '-');
-
-    // Create a sticky neighborhood header displaying the neighborhood name
-    var header = document.createElement('div');
-    header.className = 'neighborhood-header';
-    header.textContent = neighborhood;
-    section.appendChild(header);
-
-    // Create a table wrapper and the table element
-    var tableWrapper = document.createElement('div');
-    tableWrapper.className = 'table-wrapper';
-    var table = document.createElement('table');
-
-    // Build the table header with a fixed Restaurant & Deal column and weekday columns (Mon-Fri)
-    var thead = document.createElement('thead');
-    var headerRow = document.createElement('tr');
-
-    // Restaurant & Deal header cell (fixed width)
-    var thRest = document.createElement('th');
-    thRest.className = 'rest-col';
-    thRest.textContent = 'Restaurant & Deal';
-    headerRow.appendChild(thRest);
-
-    // Create header cells for weekdays (Mon-Fri)
-    var days = ['M', 'T', 'W', 'T', 'F'];
-    days.forEach(function(day) {
-      var th = document.createElement('th');
-      th.textContent = day;
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    // Build the table body by looping over each restaurant in the neighborhood
-    var tbody = document.createElement('tbody');
-    neighborhoods[neighborhood].forEach(function(row) {
-      // Create a table row for the restaurant
-      var tr = document.createElement('tr');
-      tr.className = 'rest-row';
-
-      // --- NEW: Set the data-deals attribute based on weekday deal availability ---
-      var weekdayKeys = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-      var deals = [];
-      weekdayKeys.forEach(function(day, index) {
-        if (row[day] && row[day].toLowerCase() === "yes") {
-          deals.push(index + 1); // Map Monday=1, Tuesday=2, etc.
-        }
-      });
-      tr.setAttribute('data-deals', deals.join(','));
-
-      // Generate the restaurant's favicon URL dynamically from its URL
-      var faviconURL = getFaviconURL(row.RestaurantURL);
-
-      // Build the restaurant info cell including favicon, name, and clickable icons
-      var tdInfo = document.createElement('td');
-      tdInfo.className = 'rest-info';
-      tdInfo.innerHTML = `
-        <div class="rest-header">
-          <img class="rest-icon" src="${faviconURL}" alt="${row.RestaurantName}" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com';">
-          <span class="rest-name">${row.RestaurantName}</span>
-          <div class="icon-links">
-            <a class="homepage-link" href="${row.RestaurantURL}" target="_blank" title="Restaurant Homepage" onclick="event.stopPropagation();">
-              <svg viewBox="0 0 24 24">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4h-2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
-              </svg>
-            </a>
-            <a class="maps-link" href="${row.MapsURL ? row.MapsURL : ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(row.RestaurantName) + '+Atlanta')}" target="_blank" title="Google Maps" onclick="event.stopPropagation();">
-              <svg viewBox="0 0 24 24">
-                <path d="M21 10c0 5.5-9 13-9 13S3 15.5 3 10a9 9 0 1118 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-            </a>
-          </div>
-        </div>
-        <span class="overall-deal">${row.Deal}</span>
-      `;
-      tr.appendChild(tdInfo);
-
-      // Create weekday cells (Mon-Fri) and display a checkmark if a deal exists
-      weekdayKeys.forEach(function(day) {
-        var td = document.createElement('td');
-        td.className = 'day-cell';
-        if (row[day] && row[day].toLowerCase() === "yes") {
-          td.innerHTML = '<div class="checkmark">✔</div>';
-        } else if (row[day] && row[day].trim() !== "") {
-          td.innerHTML = `<div>${row[day]}</div>`;
-        }
-        tr.appendChild(td);
-      });
-
-      tbody.appendChild(tr);
-    });
-
-    // Finalize table structure and append the section to the main container
-    table.appendChild(tbody);
-    tableWrapper.appendChild(table);
-    section.appendChild(tableWrapper);
-    container.appendChild(section);
-  });
-}
-
-/**
- * filterRows
- * 
- * Filters restaurant rows based on the "Happening now" toggle and the user's current weekday.
- * Each row's custom data-deals attribute is used to determine if a deal is available today.
- * On weekends or if the toggle is off, all rows are displayed.
- */
-function filterRows() {
-  // Determine the current weekday (0 = Sunday, 1 = Monday, …, 6 = Saturday)
-  let currentDay = new Date().getDay();
-  // Only filter for weekdays (Mon-Fri); on weekends, do not filter.
-  if (currentDay === 0 || currentDay === 6) {
-    currentDay = null;
-  }
-  
-  // Select all restaurant rows
-  const rows = document.querySelectorAll('.rest-row');
-  rows.forEach(row => {
-    if (document.getElementById('happening-now-toggle').checked && currentDay !== null) {
-      const dealDays = row.getAttribute('data-deals');
-      if (dealDays && dealDays.split(',').map(day => day.trim()).includes(String(currentDay))) {
-        row.style.display = ''; // Show row if a deal is available today
-      } else {
-        row.style.display = 'none'; // Hide row if no deal is available
-      }
+function geocodeAddress(address, callback) {
+  const geocoder = new google.maps.Geocoder();
+  geocoder.geocode({ address }, (results, status) => {
+    if (status === 'OK' && results[0]) {
+      callback(results[0].geometry.location);
     } else {
-      // If toggle is off or it's the weekend, show all rows
-      row.style.display = '';
+      console.error(`Geocoding failed for "${address}": ${status}`);
+      callback(null);
     }
   });
 }
 
 /**
- * updateHeaderPositions
- * 
- * Dynamically calculates and sets the top offsets for the sticky headers so that:
- * - The neighborhood header is pinned exactly below the global header.
- * - The table header (M–F) is pinned exactly below its neighborhood header.
- * This ensures there are no gaps between any of the pinned header rows.
+ * createInfoWindowContent
+ *
+ * Builds the HTML content for a Google Maps InfoWindow, showing:
+ * - Venue name
+ * - Address
+ * - All day-by-day hours
+ * - A link to the Google Maps URL
+ *
+ * @param {object} venue - A single venue record from the CSV
+ * @returns {string} - HTML for the info window
  */
-function updateHeaderPositions() {
-  // Get the current height of the global header (which may change when pinned)
-  const globalHeader = document.getElementById('global-header');
-  const globalHeaderHeight = globalHeader.offsetHeight;
-  
-  // For each neighborhood header, set its top offset to be equal to the global header's height
-  const neighborhoodHeaders = document.querySelectorAll('.neighborhood-header');
-  neighborhoodHeaders.forEach(nh => {
-    nh.style.top = globalHeaderHeight + 'px';
-    // Get the height of the neighborhood header
-    const nhHeight = nh.offsetHeight;
-    // In the same section, find the table header (thead) and set its top offset
-    const section = nh.parentElement;
-    const thead = section.querySelector('thead');
-    if (thead) {
-      thead.style.top = (globalHeaderHeight + nhHeight) + 'px';
+function createInfoWindowContent(venue) {
+  const name = venue.RestaurantName || '';
+  const address = getAddressFromMapsURL(venue.MapsURL) || '';
+  const link = venue.MapsURL || '#';
+
+  // Build a small list of hours for each day
+  let hoursList = '<ul style="padding-left: 1em; margin: 0;">';
+  ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach((day) => {
+    const val = venue[day] || '';
+    if (val && !val.toLowerCase().includes('closed')) {
+      hoursList += `<li><strong>${day}:</strong> ${val}</li>`;
     }
   });
+  hoursList += '</ul>';
+
+  return `
+    <div style="max-width:250px;">
+      <h3 style="margin-top:0;">${name}</h3>
+      <p style="margin:0;">${address}</p>
+      ${hoursList}
+      <p style="margin-top:0.5rem;">
+        <a href="${link}" target="_blank" style="color:#e40303; font-weight:bold;">View on Google Maps</a>
+      </p>
+    </div>
+  `;
+}
+
+/**
+ * getCsvColumnForDay
+ *
+ * Given a lowercase day string like "monday", returns the CSV column name ("Monday").
+ *
+ * @param {string} day - e.g. "monday", "tuesday"
+ * @returns {string} e.g. "Monday", "Tuesday"
+ */
+function getCsvColumnForDay(day) {
+  return day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
+}
+
+/**
+ * capitalize
+ *
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
