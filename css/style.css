@@ -101,17 +101,25 @@ html, body {
   overflow-y: auto;
   border-right: 1px solid #ddd;
   position: relative;
+  /* Optional: add a subtle shadow for depth */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
-/* Pinned Sidebar Header (Site Title) */
+
+/* Sidebar Header Card: Always visible and styled as a card */
 #sidebar-header {
   position: sticky;
   top: 0;
-  height: 50px;      /* fixed height */
-  line-height: 50px; /* vertically center text */
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid #ddd;
-  text-align: center;
+  height: 60px;           /* fixed height */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0.5rem;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 20;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 #sidebar-header h1 {
   margin: 0;
@@ -123,10 +131,10 @@ html, body {
   padding: 0.5rem;
 }
 
-/* Neighborhood Header: Sticky below Sidebar Header */
+/* Neighborhood Header: Sticky immediately below the sidebar header */
 .neighborhood-header {
   position: sticky;
-  top: 50px;  /* sticks immediately below #sidebar-header */
+  top: 70px; /* 60px header height + ~10px margin */
   background: #750787;
   color: #fff;
   padding: 0.5rem;
