@@ -2,84 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Atlanta Socializers</title>
+  <title>Atlanta Socializers Happy Hour Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 
-  <!-- Link to our custom CSS -->
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Favicon (optional, replace paths as needed) -->
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="/Atl-happy-hour/favicon.svg"
-  />
-  <link
-    rel="icon"
-    type="image/png"
-    href="/Atl-happy-hour/favicon-96x96.png"
-    sizes="96x96"
-  />
-  <link
-    rel="shortcut icon"
-    href="/Atl-happy-hour/favicon.ico"
-  />
-  <link
-    rel="apple-touch-icon"
-    sizes="180x180"
-    href="/Atl-happy-hour/apple-touch-icon.png"
-  />
-  <link
-    rel="manifest"
-    href="/Atl-happy-hour/site.webmanifest"
-  />
+  <!-- Favicon links (adjust paths as needed) -->
+  <link rel="icon" type="image/svg+xml" href="/Atl-happy-hour/favicon.svg" />
+  <link rel="icon" type="image/png" href="/Atl-happy-hour/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/Atl-happy-hour/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/Atl-happy-hour/apple-touch-icon.png" />
+  <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Main Header -->
+  <!-- Pinned Header -->
   <header id="main-header">
-    <h1>Atlanta Socializers</h1>
+    <div class="header-top">
+      <h1>Atlanta Socializers Happy Hour Guide</h1>
+      <div class="happening-now">
+        <span>Happening Now:</span>
+        <label class="switch">
+          <input type="checkbox" id="happening-now-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
     <div id="day-filter">
       <button data-day="all" class="active">All Days</button>
-      <button data-day="monday">Monday</button>
-      <button data-day="tuesday">Tuesday</button>
-      <button data-day="wednesday">Wednesday</button>
-      <button data-day="thursday">Thursday</button>
-      <button data-day="friday">Friday</button>
-      <button data-day="saturday">Saturday</button>
-      <button data-day="sunday">Sunday</button>
+      <button data-day="mon">Monday</button>
+      <button data-day="tue">Tuesday</button>
+      <button data-day="wed">Wednesday</button>
+      <button data-day="thu">Thursday</button>
+      <button data-day="fri">Friday</button>
     </div>
   </header>
 
-  <!-- Google Map -->
+  <!-- Pinned Google Map -->
   <div id="map"></div>
 
-  <!-- Container for the list of venues -->
-  <div class="container" id="venue-list"></div>
+  <!-- Main Content Container -->
+  <div class="container" id="venue-container">
+    <!-- Restaurant groups by neighborhood will be dynamically injected here -->
+  </div>
 
-  <!-- Footer Note -->
+  <!-- Footer -->
   <footer>
     <p class="footer-note">
       *As of March 2025 – call or visit each restaurant for up-to-date offers.
     </p>
   </footer>
 
-  <!-- PapaParse for CSV parsing -->
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
-  ></script>
-
-  <!-- Google Maps JS (with your provided API key) -->
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s"
-  ></script>
-
-  <!-- Main JS -->
+  <!-- PapaParse Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <!-- Your Custom JS -->
   <script src="js/main.js"></script>
+  <!-- Load Google Maps asynchronously with a callback -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"></script>
 </body>
 </html>
