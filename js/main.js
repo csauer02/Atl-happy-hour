@@ -76,18 +76,31 @@ function renderRestaurants() {
     groups[nb].push(restaurant);
   });
 
-  // Create a section for each neighborhood group
+  // For each neighborhood, create a section with a sticky neighborhood header and cards
   for (const neighborhood in groups) {
     const section = document.createElement('div');
     section.className = 'neighborhood-section';
 
-    // Sticky neighborhood header
+    // Create sticky neighborhood header
     const nbHeader = document.createElement('div');
     nbHeader.className = 'neighborhood-header';
     nbHeader.textContent = neighborhood;
+    // When a neighborhood header is clicked, compute bounds for all markers in that group and fit the map
+    nbHeader.addEventListener('click', () => {
+      const bounds = new google.maps.LatLngBounds();
+      groups[neighborhood].forEach(restaurant => {
+        const marker = markerMap[restaurant.id];
+        if (marker) {
+          bounds.extend(marker.getPosition());
+        }
+      });
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds);
+      }
+    });
     section.appendChild(nbHeader);
 
-    // Container for restaurant cards
+    // Create container for restaurant cards
     const contentDiv = document.createElement('div');
     contentDiv.className = 'neighborhood-content';
 
@@ -95,7 +108,7 @@ function renderRestaurants() {
       const card = createRestaurantCard(restaurant);
       contentDiv.appendChild(card);
 
-      // Geocode restaurant address and create a marker
+      // Geocode restaurant address and create a marker if it doesn't already exist
       const address = getAddressFromMapsURL(restaurant.MapsURL);
       if (address) {
         geocodeAddress(address, (location) => {
@@ -103,15 +116,12 @@ function renderRestaurants() {
             const marker = new google.maps.Marker({
               position: location,
               map: map,
-              // All markers start dimmed:
               opacity: 0.3,
-              // Use your standard icon – no bounce or size change.
               icon: {
                 url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
                 scaledSize: new google.maps.Size(32, 32)
               }
             });
-            // Save marker with restaurant id (as key)
             markerMap[restaurant.id] = marker;
 
             // When a marker is clicked, select the corresponding restaurant
@@ -130,6 +140,7 @@ function renderRestaurants() {
   // Apply current filters after rendering
   applyFilters();
 }
+
 
 /**
  * createRestaurantCard
