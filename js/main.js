@@ -173,6 +173,22 @@ function updateCarouselPosition() {
   slidesContainer.style.transform = `translateX(${offset}px)`;
 }
 
+/**
+ * getAddressFromMapsURL
+ * Extracts the address from a Google Maps URL (the "q" parameter).
+ */
+function getAddressFromMapsURL(url) {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    const params = new URLSearchParams(parsed.search);
+    return params.get('q');
+  } catch (e) {
+    console.warn('Invalid Maps URL:', url);
+    return null;
+  }
+}
+
 /* ================================
    MARKER CREATION
 ================================ */
@@ -180,7 +196,7 @@ function createOrUpdateMarker(restaurant) {
   if (!markerMap[restaurant.id]) {
     const address = getAddressFromMapsURL(restaurant.MapsURL);
     if (!address) return;
-    geocodeAddress(address, (location) => {
+    (address, (location) => {
       if (location) {
         const marker = new google.maps.Marker({
           position: location,
