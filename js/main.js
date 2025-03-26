@@ -1,11 +1,12 @@
 /**
  * Main JavaScript File for ATL Happy Hour
  *
- * This version forces all restaurants to be visible and provides a harmonized experience:
- * - Desktop (or mobile landscape): standard sidebar + map view.
- * - Mobile portrait: bottom carousel view.
+ * This version forces all restaurants to be visible.
+ * Desktop (or mobile landscape) mode shows the standard sidebar and map.
+ * Mobile portrait mode (devices with width <= 800px) hides the sidebar and builds a bottom carousel.
  *
- * Filtering is disabled (all restaurants are shown), and your Google Maps API key is used.
+ * Filtering is disabled; all restaurants are shown.
+ * Your Google Maps API key is used.
  */
 
 /* ================================
@@ -23,23 +24,32 @@ let slidesData = [];               // Array of objects { restaurant }
 /* ================================
    HELPER FUNCTIONS
 ================================ */
-// Returns true if the viewport is in mobile portrait mode.
-function isMobilePortrait() {
-  return window.innerWidth <= 800 && window.innerHeight > window.innerWidth;
+// Returns true if the viewport is considered "mobile" (width <= 800px).
+function isMobile() {
+  return window.innerWidth <= 800;
 }
 
 /* ================================
    LAYOUT ADJUSTMENT
 ================================ */
-// Called on load, resize, and orientation change to toggle between views.
+// Called on load, resize, and orientation change.
 function updateLayout() {
-  if (isMobilePortrait()) {
-    // Mobile portrait: hide the sidebar; show the carousel.
-    document.getElementById('sidebar').style.display = 'none';
-    document.getElementById('mobile-carousel').style.display = 'block';
-    updateMobileCarousel();
+  if (isMobile()) {
+    // In mobile mode (portrait or landscape with small width), decide which view to show.
+    // We'll use a simple check: if the height is greater than width, treat it as portrait.
+    if (window.innerHeight > window.innerWidth) {
+      // Mobile portrait: hide sidebar; show carousel.
+      document.getElementById('sidebar').style.display = 'none';
+      document.getElementById('mobile-carousel').style.display = 'block';
+      updateMobileCarousel();
+    } else {
+      // Mobile landscape: use desktop layout.
+      document.getElementById('sidebar').style.display = 'block';
+      document.getElementById('mobile-carousel').style.display = 'none';
+      renderDesktopView();
+    }
   } else {
-    // Desktop or mobile landscape: show the sidebar; hide the carousel.
+    // Desktop mode
     document.getElementById('sidebar').style.display = 'block';
     document.getElementById('mobile-carousel').style.display = 'none';
     renderDesktopView();
@@ -70,9 +80,7 @@ function loadCSVData() {
       const data = results.data.sort((a, b) =>
         (a.Neighborhood || '').toLowerCase().localeCompare((b.Neighborhood || '').toLowerCase())
       );
-      data.forEach((row, i) => {
-        row.id = i;
-      });
+      data.forEach((row, i) => { row.id = i; });
       allRestaurants = data;
       renderDesktopView();
       updateLayout();
@@ -114,6 +122,7 @@ function renderDesktopView() {
     const content = document.createElement('div');
     content.className = 'neighborhood-content';
     groups[nb].forEach(r => {
+      // All restaurants are visible.
       const card = createRestaurantCard(r);
       content.appendChild(card);
       createOrUpdateMarker(r);
@@ -132,7 +141,7 @@ function updateMobileCarousel() {
   const slidesContainer = document.getElementById('carousel-slides');
   slidesContainer.innerHTML = '';
   slidesData = [];
-  // Force all restaurants to be visible.
+  // Use all restaurants (forcing visibility).
   allRestaurants.forEach(r => {
     slidesData.push({ restaurant: r });
     createOrUpdateMarker(r);
@@ -141,7 +150,7 @@ function updateMobileCarousel() {
     const slide = document.createElement('div');
     slide.className = 'carousel-slide';
     slide.setAttribute('data-slide-index', idx);
-    // In mobile mode, we display only the restaurant card.
+    // In mobile mode, we display only the restaurant card (no neighborhood header).
     const card = createRestaurantCard(item.restaurant, true);
     slide.appendChild(card);
     slidesContainer.appendChild(slide);
@@ -293,19 +302,19 @@ function selectRestaurant(selectedId) {
   const selectedCard = document.querySelector(`.restaurant-card[data-id="${selectedId}"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
-    if (!isMobilePortrait()) {
+    if (!isMobile()) {
       selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 }
 
 /* ================================
-   FILTERS (All restaurants visible)
+   FILTERS (Disabled)
 ================================ */
 function applyFilters() {
-  // Filtering is disabled; simply re-render everything.
+  // Filtering is disabled; simply re-render the views.
   renderDesktopView();
-  if (isMobilePortrait()) {
+  if (isMobile() && window.innerHeight > window.innerWidth) {
     updateMobileCarousel();
   }
 }
