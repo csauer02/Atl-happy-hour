@@ -43,16 +43,16 @@
     </div>
   </header>
 
-  <!-- Main Content Container (flex layout) -->
+  <!-- Main Content => sidebar + map in normal flow -->
   <main id="main-content">
-    <!-- Restaurant Panel (desktop = left sidebar, mobile portrait = top pane) -->
+    <!-- Sidebar for restaurant listing -->
     <section id="sidebar">
       <div id="venue-container">
-        <!-- JS will inject the restaurant cards here, grouped by neighborhood -->
+        <!-- JS will inject the restaurant cards (grouped by neighborhood) here -->
       </div>
     </section>
 
-    <!-- Map Panel -->
+    <!-- Map container -->
     <section id="map-container">
       <div id="map-favicon-overlay">
         <img src="/Atl-happy-hour/favicon-96x96.png" alt="Site Favicon" />
@@ -61,7 +61,7 @@
     </section>
   </main>
 
-  <!-- Footer (wraps as needed) -->
+  <!-- Footer with reduced padding -->
   <footer id="global-footer">
     <p>As of March 2025 – call or visit each restaurant for up-to-date offers.</p>
   </footer>
@@ -70,7 +70,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
 
-  <!-- Google Maps with your API key -->
+  <!-- Google Maps API with your API key -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"
     async
