@@ -10,7 +10,7 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: 'Roboto', sans-serif;
-  background-color: #f1e0c6; /* Warm tan background */
+  background-color: #f1e0c6;
   color: #333;
 }
 
@@ -42,7 +42,6 @@ html, body {
   flex-wrap: wrap;
   max-width: 100%;
 }
-
 #day-filter {
   display: flex;
   flex-wrap: wrap;
@@ -61,8 +60,6 @@ html, body {
   background: #333;
   color: #fff;
 }
-
-/* "Happening Now" Toggle Switch */
 .happening-now {
   display: flex;
   align-items: center;
@@ -83,10 +80,7 @@ html, body {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
   border-radius: 22px;
@@ -94,10 +88,8 @@ html, body {
 .slider:before {
   content: "";
   position: absolute;
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
+  height: 16px; width: 16px;
+  left: 3px; bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -134,14 +126,14 @@ html, body {
 
 /* ================================
    Map Container
-   - Desktop: right of sidebar
-   - Mobile: full width below header and above footer
+   - Desktop & Mobile Landscape: Sidebar visible, map occupies remainder.
+   - Mobile Portrait: Map occupies full width except for bottom carousel.
 ================================ */
 #map-container {
   position: fixed;
-  top: 60px; /* below header */
-  bottom: 30px; /* above footer */
-  left: 320px; /* offset for desktop sidebar */
+  top: 60px;
+  bottom: 30px;
+  left: 320px; /* Desktop/sidebar width */
   right: 0;
   background: #eee;
   overflow: hidden;
@@ -260,62 +252,89 @@ html, body {
 }
 
 /* ================================
-   Mobile Carousel Styling
+   Mobile Carousel (Portrait Mode)
 ================================ */
-#mobile-carousel {
-  display: none; /* hidden on desktop */
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 30px; /* just above footer */
-  height: 150px; /* carousel height for mobile */
-  background: #fff;
-  border-top: 1px solid #ddd;
-  z-index: 10;
-  overflow: hidden;
-}
-
-/* The slides container:
-   • Positioned absolutely inside the carousel.
-   • No forced width is set so that it auto-expands based on its children.
+/* In mobile portrait mode, the carousel appears at the bottom.
+   We use media queries to show/hide elements based on orientation.
 */
-#carousel-slides {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  display: flex;
-  transition: transform 0.3s ease-in-out;
-  /* Do not set right: 0; or width here so that the container’s width equals the sum of its slides */
-}
-
-/* Each slide:
-   • Uses flex shorthand to force a width equal to 100% of the carousel.
-   • This ensures that each slide occupies the full visible area.
-*/
-.carousel-slide {
-  flex: 0 0 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-
-/* ================================
-   Media Queries
-   - Adjust layout for mobile devices (width ≤ 800px)
-================================ */
-@media (max-width: 800px) {
-  #mobile-carousel {
-    display: block;
-  }
+@media (max-width: 800px) and (orientation: portrait) {
+  /* Hide desktop sidebar; map occupies full width above carousel */
   #sidebar {
     display: none;
   }
   #map-container {
     left: 0;
     width: 100%;
+    bottom: 150px; /* leave space for carousel */
+  }
+  /* Show mobile carousel */
+  #mobile-carousel {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 150px;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    z-index: 20;
+    overflow: hidden;
+  }
+  /* Carousel slides container: auto-expanding based on children */
+  #carousel-slides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+  }
+  /* Each slide occupies exactly 100% of the carousel’s width */
+  .carousel-slide {
+    flex: 0 0 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+  /* Carousel navigation arrows */
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.8);
+    border: none;
+    font-size: 1.8rem;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    z-index: 25;
+    border-radius: 50%;
+  }
+  #carousel-left {
+    left: 10px;
+  }
+  #carousel-right {
+    right: 10px;
+  }
+}
+
+/* ================================
+   Mobile Landscape Mode
+   - In landscape mode, use the standard desktop view.
+================================ */
+@media (max-width: 800px) and (orientation: landscape) {
+  #mobile-carousel {
+    display: none;
+  }
+  #sidebar {
+    display: block;
+  }
+  #map-container {
+    left: 320px;
+    width: calc(100% - 320px);
+    bottom: 30px;
   }
 }
