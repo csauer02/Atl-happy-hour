@@ -19,7 +19,7 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Fixed Global Header with Filters (UI remains but filtering is disabled) -->
+  <!-- Fixed Global Header with Filter Controls -->
   <header id="global-header">
     <div id="filter-controls">
       <div id="day-filter">
@@ -40,10 +40,10 @@
     </div>
   </header>
 
-  <!-- Desktop Sidebar (used in desktop and mobile landscape mode) -->
+  <!-- Desktop Sidebar -->
   <div id="sidebar">
     <div id="venue-container">
-      <!-- JS will inject restaurant cards grouped by neighborhood -->
+      <!-- Restaurant cards (grouped by neighborhood) are injected here via JavaScript -->
     </div>
   </div>
 
@@ -55,15 +55,6 @@
     <div id="map"></div>
   </div>
 
-  <!-- Mobile Carousel (only visible in mobile portrait mode) -->
-  <div id="mobile-carousel">
-    <button id="carousel-left" class="carousel-arrow">‹</button>
-    <div id="carousel-slides">
-      <!-- JS will inject one restaurant card per slide -->
-    </div>
-    <button id="carousel-right" class="carousel-arrow">›</button>
-  </div>
-
   <!-- Fixed Footer -->
   <footer id="global-footer">
     <p>As of March 2025 – call or visit each restaurant for up-to-date offers.</p>
@@ -72,7 +63,7 @@
   <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
-  <!-- Google Maps API with your key -->
+  <!-- Google Maps API using your API key -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"
     async
