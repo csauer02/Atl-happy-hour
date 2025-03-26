@@ -19,11 +19,10 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Fixed Global Header with (now non-functional) Filters -->
+  <!-- Fixed Global Header with Filters (UI remains but filtering is disabled) -->
   <header id="global-header">
     <div id="filter-controls">
       <div id="day-filter">
-        <!-- These buttons remain but do nothing -->
         <button data-day="all" class="active">All Days</button>
         <button data-day="mon">M</button>
         <button data-day="tue">T</button>
@@ -34,7 +33,6 @@
       <div class="happening-now">
         <span>Happening Now:</span>
         <label class="switch">
-          <!-- This toggle remains but does nothing -->
           <input type="checkbox" id="happening-now-toggle" />
           <span class="slider"></span>
         </label>
@@ -74,8 +72,7 @@
   <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
-
-  <!-- Use your earlier Google Maps API key here -->
+  <!-- Google Maps API with your key -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"
     async
