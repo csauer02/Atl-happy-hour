@@ -42,7 +42,6 @@ html, body {
   flex-wrap: wrap;
   max-width: 100%;
 }
-
 #day-filter {
   display: flex;
   flex-wrap: wrap;
@@ -61,8 +60,7 @@ html, body {
   background: #333;
   color: #fff;
 }
-
-/* "Happening Now" Toggle Switch */
+/* Happening Now Toggle */
 .happening-now {
   display: flex;
   align-items: center;
@@ -83,7 +81,10 @@ html, body {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
   border-radius: 22px;
@@ -91,8 +92,10 @@ html, body {
 .slider:before {
   content: "";
   position: absolute;
-  height: 16px; width: 16px;
-  left: 3px; bottom: 3px;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -118,7 +121,7 @@ html, body {
   text-align: center;
   font-size: 0.85rem;
   color: #555;
-  padding: 0.15rem; /* <-- Reduced from 0.25rem */
+  padding: 0.15rem;
   z-index: 1000;
 }
 
@@ -135,16 +138,12 @@ html, body {
   overflow: hidden;
   z-index: 1;
 }
-
-/* The map is position: relative so the favicon overlay 
-   is anchored inside the map in all viewports */
 #map {
-  position: relative; /* important */
+  position: relative;
   width: 100%;
   height: 100%;
 }
-
-/* Favicon overlay pinned top-left inside the map */
+/* Favicon overlay – now anchored inside #map */
 #map-favicon-overlay {
   position: absolute;
   top: 10px;
@@ -271,14 +270,14 @@ html, body {
     padding: 0.5rem 1rem;
   }
 
-  /* Sidebar: stacked */
+  /* Sidebar: stacked without extra bottom margin */
   #sidebar {
     position: static;
     width: 100%;
     height: auto;
     border-right: none;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 0; /* remove gap before map */
+    margin-bottom: 0;
   }
   #venue-container {
     padding: 0.5rem;
@@ -289,16 +288,16 @@ html, body {
     position: static;
     width: 100%;
     height: auto;
-    margin-bottom: 1rem; /* so map doesn't run into the footer visually */
+    margin-bottom: 1rem;
   }
   #map {
-    position: relative; /* remain relative in mobile too */
+    position: relative;
     width: 100%;
     height: 400px;
   }
 
-  /* Body bottom padding so the fixed footer doesn't cover content */
+  /* Ensure content is not hidden by the fixed footer */
   body {
-    padding-bottom: 60px; /* enough space for the fixed footer */
+    padding-bottom: 60px;
   }
 }
