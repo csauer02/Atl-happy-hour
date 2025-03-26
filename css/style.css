@@ -10,24 +10,23 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: 'Roboto', sans-serif;
-  background-color: #f1e0c6; /* Warm tan background */
+  background-color: #f1e0c6;
   color: #333;
 }
 
 /* ================================
    Header with Filter Controls
-   - Expands/wraps as needed
+   - Expands and wraps as needed
 ================================ */
 #global-header {
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #ddd;
-  /* Let the header auto-size if filters wrap */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.5rem 1rem; /* Slightly reduced vertical padding */
+  padding: 0.5rem 1rem;
 }
 
 /* Filter Controls */
@@ -99,30 +98,50 @@ html, body {
 }
 
 /* ================================
-   Main Content => sidebar + map
+   Footer (Fixed to Bottom)
+   - Reduced padding
+================================ */
+#global-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #f1f1f1;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+  padding: 0.25rem; /* Reduced vertical padding */
+  z-index: 1000;
+}
+
+/* ================================
+   Main Content Layout
+   - In desktop/landscape, sidebar on left and map on right.
+   - In mobile portrait, sidebar above map.
+   - Main content is padded to avoid overlap with header and fixed footer.
 ================================ */
 #main-content {
   display: flex;
   flex-direction: row;
-  /* Fill the leftover space between header and footer (no fixed positioning) */
-  min-height: calc(100vh - 0px);
+  padding-top: calc(1rem + 0.5rem); /* at least header height, header is not fixed now */
+  /* Add bottom margin equal to footer height to avoid overlap */
+  margin-bottom: 40px; /* Assume footer ~40px tall; this will be updated dynamically if needed */
 }
 
-/* Restaurant Sidebar */
+/* Desktop Sidebar */
 #sidebar {
   width: 320px;
   background: #fff;
   border-right: 1px solid #ddd;
-  /* Make the sidebar scrollable if content is too tall in landscape mode */
   overflow-y: auto;
-  /* So pinned (sticky) neighborhood headers can work inside this container */
   position: relative;
 }
 #venue-container {
-  padding: 0.5rem; /* Reduced vertical padding to make it denser */
+  padding: 0.5rem; /* Denser */
 }
 
-/* Map Container => fills remaining space */
+/* Map Container */
 #map-container {
   flex: 1;
   position: relative;
@@ -142,26 +161,11 @@ html, body {
 }
 #map {
   width: 100%;
-  height: 600px; /* Default for desktop; can be adjusted */
+  height: 600px; /* default desktop height */
 }
 
 /* ================================
-   Footer (wraps as needed)
-   - Reduced vertical padding
-================================ */
-#global-footer {
-  width: 100%;
-  background: #f1f1f1;
-  border-top: 1px solid #ddd;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #555;
-  padding: 0.25rem; /* Reduce vertical padding */
-}
-
-/* ================================
-   Restaurant Cards
-   - Make them denser
+   Restaurant Cards (Densified)
 ================================ */
 .neighborhood-section {
   margin-bottom: 0.5rem;
@@ -174,8 +178,6 @@ html, body {
   margin-bottom: 0.4rem;
   border-radius: 4px;
   font-size: 0.85rem;
-
-  /* Pinned below the filter headers => sticky inside the sidebar container */
   position: sticky;
   top: 0;
   z-index: 1;
@@ -187,7 +189,7 @@ html, body {
   background: #fff;
   border-radius: 6px;
   margin-bottom: 0.5rem;
-  padding: 0.5rem; /* Denser than before */
+  padding: 0.5rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -245,21 +247,24 @@ html, body {
 }
 
 /* ================================
-   Mobile Portrait => stack sidebar above map
+   Mobile Portrait Layout
+   - Sidebar (restaurant panel) above Map
+   - Dynamically sized using available viewport height (header and footer excluded)
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
   #main-content {
     flex-direction: column;
+    /* We'll set the height dynamically via JavaScript */
   }
   #sidebar {
     width: 100%;
-    height: 40vh;
+    /* Height will be set to 40% of available content height */
     border-right: none;
     border-bottom: 1px solid #ddd;
   }
   #map-container {
     width: 100%;
-    height: 60vh;
+    /* Height set to 60% of available content height */
   }
   #map {
     height: 100%;
