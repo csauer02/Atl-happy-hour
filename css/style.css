@@ -263,11 +263,11 @@ html, body {
    Mobile Carousel Styling
 ================================ */
 #mobile-carousel {
-  display: none; /* hidden by default on desktop */
+  display: none; /* hidden on desktop */
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 30px; /* just above the footer */
+  bottom: 30px; /* just above footer */
   height: 150px; /* carousel height for mobile */
   background: #fff;
   border-top: 1px solid #ddd;
@@ -275,8 +275,9 @@ html, body {
   overflow: hidden;
 }
 
-/* Carousel slides container is a flex container that does not have a fixed width.
-   Removing width: 100% lets it expand based on its children.
+/* The slides container:
+   • Positioned absolutely inside the carousel.
+   • No forced width is set so that it auto-expands based on its children.
 */
 #carousel-slides {
   position: absolute;
@@ -285,10 +286,13 @@ html, body {
   height: 100%;
   display: flex;
   transition: transform 0.3s ease-in-out;
-  /* Do not force width here so that it auto-expands */
+  /* Do not set right: 0; or width here so that the container’s width equals the sum of its slides */
 }
 
-/* Each slide is forced to be 100% of the mobile carousel's width */
+/* Each slide:
+   • Uses flex shorthand to force a width equal to 100% of the carousel.
+   • This ensures that each slide occupies the full visible area.
+*/
 .carousel-slide {
   flex: 0 0 100%;
   display: flex;
@@ -301,7 +305,7 @@ html, body {
 
 /* ================================
    Media Queries
-   - Adjust layout for narrower screens
+   - Adjust layout for mobile devices (width ≤ 800px)
 ================================ */
 @media (max-width: 800px) {
   #mobile-carousel {
