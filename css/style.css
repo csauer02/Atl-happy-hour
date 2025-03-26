@@ -18,7 +18,7 @@ html, body {
    Fixed Global Header (Desktop/Landscape)
 ================================ */
 #global-header {
-  position: fixed;        /* Restored fixed positioning for desktop */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -105,23 +105,21 @@ html, body {
 }
 
 /* ================================
-   Fixed Footer (Desktop/Landscape)
+   Global Fixed Footer
+   - Using the “mobile portrait” style but fixed for all devices
 ================================ */
 #global-footer {
-  position: fixed;       /* Restored fixed positioning for desktop */
+  position: fixed;
   bottom: 0;
   left: 0;
-  right: 0;
-  height: 30px;
+  width: 100%;
   background: #f1f1f1;
   border-top: 1px solid #ddd;
-  z-index: 1000;
   text-align: center;
-  line-height: 30px;
   font-size: 0.85rem;
   color: #555;
-  margin: 0;
-  padding: 0;
+  padding: 0.25rem;
+  z-index: 1000;
 }
 
 /* ================================
@@ -129,10 +127,10 @@ html, body {
    - Right of sidebar, below header, above footer
 ================================ */
 #map-container {
-  position: fixed;       /* Restored fixed positioning for desktop */
-  top: 60px;             /* below header */
-  bottom: 30px;          /* above footer */
-  left: 320px;           /* offset for desktop sidebar */
+  position: fixed;
+  top: 60px;     /* below header */
+  bottom: 30px;  /* above footer */
+  left: 320px;   /* offset for desktop sidebar */
   right: 0;
   background: #eee;
   overflow: hidden;
@@ -161,7 +159,7 @@ html, body {
    Sidebar (Desktop/Landscape)
 ================================ */
 #sidebar {
-  position: fixed;       /* Restored fixed positioning for desktop */
+  position: fixed;
   top: 60px;
   bottom: 30px;
   left: 0;
@@ -259,27 +257,19 @@ html, body {
 
 /* ================================
    Mobile Portrait Layout
-   - Overrides the default fixed layout
-   - Stacks header, sidebar, and map
+   - Stacks header, sidebar, map
+   - Footer remains fixed at bottom
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
-  /* Make the header non-fixed so it can wrap nicely */
+  /* Header: no longer fixed in portrait */
   #global-header {
     position: static;
     width: 100%;
+    height: auto;
     padding: 0.5rem 1rem;
   }
-  
-  /* Footer: also no longer fixed in portrait */
-  #global-footer {
-    position: static;
-    width: 100%;
-    height: auto;
-    line-height: normal;
-    padding: 0.25rem;
-  }
 
-  /* Remove fixed positioning from sidebar and map */
+  /* Sidebar: stacked, no fixed height */
   #sidebar {
     position: static;
     width: 100%;
@@ -292,14 +282,20 @@ html, body {
     padding: 0.5rem;
   }
 
+  /* Map: stacked under the sidebar */
   #map-container {
     position: static;
     width: 100%;
     height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem; /* so it doesn't run into the footer visually */
   }
   #map {
     width: 100%;
-    height: 400px; /* or use a dynamic height if you prefer */
+    height: 400px; /* or use a dynamic approach if you prefer */
+  }
+
+  /* Since footer is fixed, add bottom padding so content is visible */
+  body {
+    padding-bottom: 60px; /* Enough space for the fixed footer */
   }
 }
