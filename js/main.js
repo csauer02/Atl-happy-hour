@@ -170,8 +170,8 @@ function renderMobileCarousel() {
   // Enable swipe gestures on mobile
   addSwipeListeners();
 
-  // Set the initial slide position
-  updateCarouselPosition();
+  // Delay the initial positioning slightly to ensure layout calculations are ready
+  setTimeout(updateCarouselPosition, 100);
 }
 
 // Add touch event listeners to support swipe gestures
@@ -211,17 +211,21 @@ function nextSlide() {
 }
 
 // Update the carousel's visible position based on the current slide index.
-// Note: This version uses the mobile carousel container's width.
+// Uses the width of the mobile carousel container.
 function updateCarouselPosition() {
   const carousel = document.getElementById('mobile-carousel');
   const slidesContainer = document.getElementById('carousel-slides');
-  const slideWidth = carousel.clientWidth; // Use carousel's width for proper calculations
+  // Ensure we have a valid carousel width; if not, default to window width.
+  const slideWidth = carousel.clientWidth || window.innerWidth;
   const offset = -currentSlideIndex * slideWidth;
   slidesContainer.style.transform = `translateX(${offset}px)`;
 }
 
-// Listen for window resize events to recalculate carousel positioning.
+// Listen for window resize and orientation change events to recalculate carousel positioning.
 window.addEventListener('resize', updateCarouselPosition);
+window.addEventListener('orientationchange', () => {
+  setTimeout(updateCarouselPosition, 100);
+});
 
 /* ================================
    GEOCODING & MARKER CREATION
