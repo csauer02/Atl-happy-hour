@@ -142,7 +142,7 @@ html, body {
   width: 100%;
   height: 100%;
 }
-/* Favicon overlay – now anchored inside #map */
+/* Favicon overlay – anchored inside #map */
 #map-favicon-overlay {
   position: absolute;
   top: 10px;
@@ -259,44 +259,52 @@ html, body {
 
 /* ================================
    Mobile Portrait Layout
+   - The main-content becomes a vertical flex container.
+   - The sidebar (restaurant cards) takes auto height.
+   - The map container fills the remaining space between the sidebar and footer.
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
-  /* Header: stacked, not fixed */
+  /* Header: static so it can wrap nicely */
   #global-header {
     position: static;
     width: 100%;
     height: auto;
     padding: 0.5rem 1rem;
   }
-
-  /* Sidebar: stacked without extra bottom margin */
+  
+  /* Main content as flex column */
+  #main-content {
+    display: flex;
+    flex-direction: column;
+    /* Subtract header and footer heights from viewport height;
+       adjust these values if your header/footer sizes change */
+    height: calc(100vh - 60px - 30px);
+  }
+  
+  /* Sidebar: static and auto height based on content */
   #sidebar {
     position: static;
     width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #ddd;
     margin-bottom: 0;
   }
   #venue-container {
     padding: 0.5rem;
   }
-
-  /* Map: stacked directly under the sidebar */
+  
+  /* Map container fills the remaining space */
   #map-container {
     position: static;
     width: 100%;
-    height: auto;
-    margin-bottom: 0; /* Removed extra gap */
+    flex: 1;
   }
   #map {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 100%;
   }
-
-  /* Ensure content isn’t hidden behind the fixed footer */
+  
+  /* Ensure the fixed footer doesn’t cover content */
   body {
-    padding-bottom: 60px;
+    padding-bottom: 30px;
   }
 }
