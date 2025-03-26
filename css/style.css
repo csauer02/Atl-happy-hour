@@ -106,7 +106,7 @@ html, body {
 
 /* ================================
    Global Fixed Footer
-   - Using the “mobile portrait” style but fixed for all devices
+   (Reduced vertical padding)
 ================================ */
 #global-footer {
   position: fixed;
@@ -118,13 +118,12 @@ html, body {
   text-align: center;
   font-size: 0.85rem;
   color: #555;
-  padding: 0.25rem;
+  padding: 0.15rem; /* <-- Reduced from 0.25rem */
   z-index: 1000;
 }
 
 /* ================================
    Map Container (Desktop/Landscape)
-   - Right of sidebar, below header, above footer
 ================================ */
 #map-container {
   position: fixed;
@@ -136,11 +135,16 @@ html, body {
   overflow: hidden;
   z-index: 1;
 }
+
+/* The map is position: relative so the favicon overlay 
+   is anchored inside the map in all viewports */
 #map {
+  position: relative; /* important */
   width: 100%;
   height: 100%;
-  position: relative;
 }
+
+/* Favicon overlay pinned top-left inside the map */
 #map-favicon-overlay {
   position: absolute;
   top: 10px;
@@ -257,11 +261,9 @@ html, body {
 
 /* ================================
    Mobile Portrait Layout
-   - Stacks header, sidebar, map
-   - Footer remains fixed at bottom
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
-  /* Header: no longer fixed in portrait */
+  /* Header: stacked, not fixed */
   #global-header {
     position: static;
     width: 100%;
@@ -269,14 +271,14 @@ html, body {
     padding: 0.5rem 1rem;
   }
 
-  /* Sidebar: stacked, no fixed height */
+  /* Sidebar: stacked */
   #sidebar {
     position: static;
     width: 100%;
     height: auto;
     border-right: none;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 0;
+    margin-bottom: 0; /* remove gap before map */
   }
   #venue-container {
     padding: 0.5rem;
@@ -287,15 +289,16 @@ html, body {
     position: static;
     width: 100%;
     height: auto;
-    margin-bottom: 1rem; /* so it doesn't run into the footer visually */
+    margin-bottom: 1rem; /* so map doesn't run into the footer visually */
   }
   #map {
+    position: relative; /* remain relative in mobile too */
     width: 100%;
-    height: 400px; /* or use a dynamic approach if you prefer */
+    height: 400px;
   }
 
-  /* Since footer is fixed, add bottom padding so content is visible */
+  /* Body bottom padding so the fixed footer doesn't cover content */
   body {
-    padding-bottom: 60px; /* Enough space for the fixed footer */
+    padding-bottom: 60px; /* enough space for the fixed footer */
   }
 }
