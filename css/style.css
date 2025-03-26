@@ -108,8 +108,7 @@ html, body {
 }
 
 /* ================================
-   Global Fixed Footer
-   (Reduced vertical padding)
+   Global Fixed Footer (Reduced Padding)
 ================================ */
 #global-footer {
   position: fixed;
@@ -283,12 +282,12 @@ html, body {
     padding: 0.5rem;
   }
 
-  /* Map: stacked under the sidebar */
+  /* Map: stacked directly under the sidebar */
   #map-container {
     position: static;
     width: 100%;
     height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 0; /* Removed extra gap */
   }
   #map {
     position: relative;
@@ -296,7 +295,7 @@ html, body {
     height: 400px;
   }
 
-  /* Ensure content is not hidden by the fixed footer */
+  /* Ensure content isn’t hidden behind the fixed footer */
   body {
     padding-bottom: 60px;
   }
