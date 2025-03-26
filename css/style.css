@@ -32,16 +32,17 @@ html, body {
   padding: 0 1rem;
 }
 
-/* Container for filter controls */
+/* ================================
+   Filter Controls & Buttons
+================================ */
 #filter-controls {
   display: flex;
   gap: 1rem;
   align-items: center;
-  flex-wrap: wrap; /* allow wrapping on small screens */
+  flex-wrap: wrap;
   max-width: 100%;
 }
 
-/* Day filter buttons container */
 #day-filter {
   display: flex;
   flex-wrap: wrap;
@@ -61,19 +62,17 @@ html, body {
   color: #fff;
 }
 
-/* "Happening Now" toggle switch */
+/* "Happening Now" Toggle Switch */
 .happening-now {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
 }
-
-/* Switch styling */
 .switch {
   position: relative;
   display: inline-block;
-  width: 42px; /* narrower switch */
+  width: 42px;
   height: 22px;
 }
 .switch input {
@@ -84,7 +83,10 @@ html, body {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
   border-radius: 22px;
@@ -92,8 +94,10 @@ html, body {
 .slider:before {
   content: "";
   position: absolute;
-  height: 16px; width: 16px;
-  left: 3px; bottom: 3px;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -129,7 +133,7 @@ html, body {
 }
 
 /* ================================
-   Map Container Styling
+   Map Container
    - Desktop: right of sidebar
    - Mobile: full width below header and above footer
 ================================ */
@@ -148,8 +152,6 @@ html, body {
   height: 100%;
   position: relative;
 }
-
-/* Favicon overlay on map */
 #map-favicon-overlay {
   position: absolute;
   top: 10px;
@@ -165,8 +167,7 @@ html, body {
 }
 
 /* ================================
-   Desktop Sidebar Styling
-   - Visible on wide screens
+   Desktop Sidebar & Restaurant Cards
 ================================ */
 #sidebar {
   position: fixed;
@@ -179,13 +180,9 @@ html, body {
   overflow-y: auto;
   z-index: 10;
 }
-
-/* Container for restaurant listing in desktop sidebar */
 #venue-container {
   padding: 1rem;
 }
-
-/* Neighborhood header styling (desktop) */
 .neighborhood-header {
   position: sticky;
   top: 0;
@@ -198,8 +195,6 @@ html, body {
   z-index: 5;
   font-size: 0.9rem;
 }
-
-/* Restaurant card styling (desktop) */
 .restaurant-card {
   display: flex;
   justify-content: space-between;
@@ -266,15 +261,14 @@ html, body {
 
 /* ================================
    Mobile Carousel Styling
-   - Visible on narrower screens
 ================================ */
 #mobile-carousel {
-  display: none; /* Hidden by default on desktop */
+  display: none; /* hidden by default on desktop */
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 30px; /* Just above the footer */
-  height: 150px; /* Carousel height for mobile */
+  bottom: 30px; /* just above the footer */
+  height: 150px; /* carousel height for mobile */
   background: #fff;
   border-top: 1px solid #ddd;
   z-index: 10;
@@ -290,28 +284,8 @@ html, body {
   align-items: center;
   overflow: hidden;
   transition: transform 0.3s ease-in-out;
+  width: 100%;
 }
-/* Navigation arrows for mobile carousel */
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.8);
-  border: none;
-  font-size: 1.8rem;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  z-index: 20;
-  border-radius: 50%;
-}
-#carousel-left {
-  left: 10px;
-}
-#carousel-right {
-  right: 10px;
-}
-/* Each slide in the mobile carousel: one restaurant card per slide */
 .carousel-slide {
   min-width: 100%;
   max-width: 100%;
@@ -328,13 +302,12 @@ html, body {
    - Adjust layout for narrower screens
 ================================ */
 @media (max-width: 800px) {
-  #sidebar {
-    display: none;
-  }
   #mobile-carousel {
     display: block;
   }
-  /* Adjust map container to use full width on mobile */
+  #sidebar {
+    display: none;
+  }
   #map-container {
     left: 0;
     width: 100%;
