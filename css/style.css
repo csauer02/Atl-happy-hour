@@ -16,7 +16,7 @@ html, body {
 
 /* ================================
    Header with Filter Controls
-   - Expand/wrap as needed
+   - Expands/wraps as needed
 ================================ */
 #global-header {
   width: 100%;
@@ -27,10 +27,10 @@ html, body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.75rem 1rem;
-  /* z-index not needed if everything is in normal flow */
+  padding: 0.5rem 1rem; /* Slightly reduced vertical padding */
 }
 
+/* Filter Controls */
 #filter-controls {
   display: flex;
   flex-wrap: wrap;
@@ -62,6 +62,7 @@ html, body {
   gap: 0.4rem;
   font-size: 0.85rem;
 }
+/* Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -98,43 +99,30 @@ html, body {
 }
 
 /* ================================
-   Footer (wraps if text is too long)
-================================ */
-#global-footer {
-  width: 100%;
-  background: #f1f1f1;
-  border-top: 1px solid #ddd;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #555;
-  padding: 0.5rem;
-  /* Let text wrap naturally */
-}
-
-/* ================================
-   Main Content (Sidebar + Map)
-   - Desktop: flex row
-   - Mobile Portrait: special layout
+   Main Content => sidebar + map
 ================================ */
 #main-content {
   display: flex;
   flex-direction: row;
-  /* Let the header push it down & the footer push it up, so no fixed heights */
-  min-height: calc(100vh - 0px); /* can be refined, but we rely on normal flow */
+  /* Fill the leftover space between header and footer (no fixed positioning) */
+  min-height: calc(100vh - 0px);
 }
 
-/* Sidebar / Restaurant Panel */
+/* Restaurant Sidebar */
 #sidebar {
   width: 320px;
   background: #fff;
   border-right: 1px solid #ddd;
-  overflow-y: auto; /* scroll if content is tall */
+  /* Make the sidebar scrollable if content is too tall in landscape mode */
+  overflow-y: auto;
+  /* So pinned (sticky) neighborhood headers can work inside this container */
+  position: relative;
 }
 #venue-container {
-  padding: 1rem;
+  padding: 0.5rem; /* Reduced vertical padding to make it denser */
 }
 
-/* Map Container */
+/* Map Container => fills remaining space */
 #map-container {
   flex: 1;
   position: relative;
@@ -154,30 +142,52 @@ html, body {
 }
 #map {
   width: 100%;
-  height: 600px; /* a default desktop height, can adjust */
+  height: 600px; /* Default for desktop; can be adjusted */
 }
 
-/* Restaurant Cards */
+/* ================================
+   Footer (wraps as needed)
+   - Reduced vertical padding
+================================ */
+#global-footer {
+  width: 100%;
+  background: #f1f1f1;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+  padding: 0.25rem; /* Reduce vertical padding */
+}
+
+/* ================================
+   Restaurant Cards
+   - Make them denser
+================================ */
 .neighborhood-section {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 .neighborhood-header {
   background: #750787;
   color: #fff;
-  padding: 0.5rem;
+  padding: 0.4rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+
+  /* Pinned below the filter headers => sticky inside the sidebar container */
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 .restaurant-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #fff;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem; /* Denser than before */
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -197,20 +207,20 @@ html, body {
 }
 .restaurant-top h2 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #750787;
 }
 .icon-links {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 .icon-links a {
   text-decoration: none;
   color: #e40303;
 }
 .icon-links svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   stroke: #333;
   fill: none;
   stroke-width: 2;
@@ -219,12 +229,12 @@ html, body {
 }
 .restaurant-deal p {
   margin: 0.25rem 0 0 0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 .restaurant-right {
-  width: 48px;
-  height: 48px;
-  margin-left: 0.75rem;
+  width: 40px;
+  height: 40px;
+  margin-left: 0.5rem;
   overflow: hidden;
   border-radius: 4px;
 }
@@ -235,31 +245,23 @@ html, body {
 }
 
 /* ================================
-   Mobile Portrait
-   - Stack the sidebar (restaurants) on top, map below
+   Mobile Portrait => stack sidebar above map
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
   #main-content {
-    flex-direction: column; /* stack top-to-bottom */
+    flex-direction: column;
   }
-
-  /* Restaurant panel: full width, 40% of viewport height */
   #sidebar {
     width: 100%;
     height: 40vh;
     border-right: none;
     border-bottom: 1px solid #ddd;
-    order: 1;
   }
-
-  /* Map panel: full width, 60% of viewport height */
   #map-container {
     width: 100%;
     height: 60vh;
-    order: 2;
   }
   #map {
-    width: 100%;
     height: 100%;
   }
 }
