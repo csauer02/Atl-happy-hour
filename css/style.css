@@ -10,36 +10,32 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: 'Roboto', sans-serif;
-  background-color: #f1e0c6;
+  background-color: #f1e0c6; /* Warm tan background */
   color: #333;
 }
 
 /* ================================
-   Fixed Global Header
+   Header with Filter Controls
+   - Expand/wrap as needed
 ================================ */
 #global-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
+  width: 100%;
   background: #fff;
   border-bottom: 1px solid #ddd;
-  z-index: 1000;
+  /* Let the header auto-size if filters wrap */
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 1rem;
+  padding: 0.75rem 1rem;
+  /* z-index not needed if everything is in normal flow */
 }
 
-/* ================================
-   Filter Controls & Buttons
-================================ */
 #filter-controls {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  flex-wrap: wrap;
   max-width: 100%;
 }
 #day-filter {
@@ -102,46 +98,47 @@ html, body {
 }
 
 /* ================================
-   Fixed Footer
+   Footer (wraps if text is too long)
 ================================ */
 #global-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 30px;
+  width: 100%;
   background: #f1f1f1;
   border-top: 1px solid #ddd;
-  z-index: 1000;
   text-align: center;
-  line-height: 30px;
   font-size: 0.85rem;
   color: #555;
-  margin: 0;
-  padding: 0;
-}
-#global-footer p {
-  margin: 0;
+  padding: 0.5rem;
+  /* Let text wrap naturally */
 }
 
 /* ================================
-   Map Container
-   - The map occupies the space to the right of the sidebar.
+   Main Content (Sidebar + Map)
+   - Desktop: flex row
+   - Mobile Portrait: special layout
 ================================ */
-#map-container {
-  position: fixed;
-  top: 60px;
-  bottom: 30px;
-  left: 320px;
-  right: 0;
-  background: #eee;
-  overflow: hidden;
-  z-index: 1;
+#main-content {
+  display: flex;
+  flex-direction: row;
+  /* Let the header push it down & the footer push it up, so no fixed heights */
+  min-height: calc(100vh - 0px); /* can be refined, but we rely on normal flow */
 }
-#map {
-  width: 100%;
-  height: 100%;
+
+/* Sidebar / Restaurant Panel */
+#sidebar {
+  width: 320px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow-y: auto; /* scroll if content is tall */
+}
+#venue-container {
+  padding: 1rem;
+}
+
+/* Map Container */
+#map-container {
+  flex: 1;
   position: relative;
+  background: #eee;
 }
 #map-favicon-overlay {
   position: absolute;
@@ -150,43 +147,27 @@ html, body {
   background: rgba(255,255,255,0.7);
   padding: 5px;
   border-radius: 4px;
-  z-index: 10;
 }
 #map-favicon-overlay img {
   width: 32px;
   height: 32px;
 }
+#map {
+  width: 100%;
+  height: 600px; /* a default desktop height, can adjust */
+}
 
-/* ================================
-   Desktop Sidebar & Restaurant Cards
-================================ */
-#sidebar {
-  position: fixed;
-  top: 60px;
-  bottom: 30px;
-  left: 0;
-  width: 320px;
-  background: #fff;
-  border-right: 1px solid #ddd;
-  overflow-y: auto;
-  z-index: 10;
-}
-#venue-container {
-  padding: 1rem;
-}
+/* Restaurant Cards */
 .neighborhood-section {
   margin-bottom: 1rem;
 }
 .neighborhood-header {
-  position: sticky;
-  top: 0;
   background: #750787;
   color: #fff;
   padding: 0.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
   border-radius: 4px;
-  z-index: 5;
   font-size: 0.9rem;
 }
 .restaurant-card {
@@ -251,4 +232,34 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ================================
+   Mobile Portrait
+   - Stack the sidebar (restaurants) on top, map below
+================================ */
+@media (max-width: 800px) and (orientation: portrait) {
+  #main-content {
+    flex-direction: column; /* stack top-to-bottom */
+  }
+
+  /* Restaurant panel: full width, 40% of viewport height */
+  #sidebar {
+    width: 100%;
+    height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    order: 1;
+  }
+
+  /* Map panel: full width, 60% of viewport height */
+  #map-container {
+    width: 100%;
+    height: 60vh;
+    order: 2;
+  }
+  #map {
+    width: 100%;
+    height: 100%;
+  }
 }
