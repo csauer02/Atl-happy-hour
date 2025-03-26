@@ -6,12 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Favicon, etc. -->
+  <!-- Favicon and related icons -->
   <link rel="icon" type="image/svg+xml" href="/Atl-happy-hour/favicon.svg" />
   <link rel="icon" type="image/png" href="/Atl-happy-hour/favicon-96x96.png" sizes="96x96" />
   <link rel="shortcut icon" href="/Atl-happy-hour/favicon.ico" />
@@ -19,7 +22,7 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Dynamic, Wrapping Header with Filters -->
+  <!-- Header with Filter Controls (expands/wraps as needed) -->
   <header id="global-header">
     <div id="filter-controls">
       <div id="day-filter">
@@ -40,16 +43,16 @@
     </div>
   </header>
 
-  <!-- Main Content: Sidebar + Map in a normal flow -->
+  <!-- Main Content Container (flex layout) -->
   <main id="main-content">
-    <!-- Sidebar for restaurant listings -->
-    <aside id="sidebar">
+    <!-- Restaurant Panel (desktop = left sidebar, mobile portrait = top pane) -->
+    <section id="sidebar">
       <div id="venue-container">
-        <!-- Neighborhood sections & restaurant cards are injected here by JS -->
+        <!-- JS will inject the restaurant cards here, grouped by neighborhood -->
       </div>
-    </aside>
+    </section>
 
-    <!-- Map Container -->
+    <!-- Map Panel -->
     <section id="map-container">
       <div id="map-favicon-overlay">
         <img src="/Atl-happy-hour/favicon-96x96.png" alt="Site Favicon" />
@@ -58,7 +61,7 @@
     </section>
   </main>
 
-  <!-- Dynamically wrapping Footer -->
+  <!-- Footer (wraps as needed) -->
   <footer id="global-footer">
     <p>As of March 2025 – call or visit each restaurant for up-to-date offers.</p>
   </footer>
@@ -66,7 +69,8 @@
   <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
-  <!-- Google Maps API (use your valid key) -->
+
+  <!-- Google Maps with your API key -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"
     async
