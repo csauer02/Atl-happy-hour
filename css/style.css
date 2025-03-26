@@ -276,7 +276,7 @@ html, body {
     height: auto;
     border-right: none;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
   #venue-container {
     padding: 0.5rem;
