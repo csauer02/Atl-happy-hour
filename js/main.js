@@ -210,13 +210,18 @@ function nextSlide() {
   updateCarouselPosition();
 }
 
-// Update the carousel's visible position based on the current slide index
+// Update the carousel's visible position based on the current slide index.
+// Note: This version uses the mobile carousel container's width.
 function updateCarouselPosition() {
+  const carousel = document.getElementById('mobile-carousel');
   const slidesContainer = document.getElementById('carousel-slides');
-  const slideWidth = slidesContainer.clientWidth;
+  const slideWidth = carousel.clientWidth; // Use carousel's width for proper calculations
   const offset = -currentSlideIndex * slideWidth;
   slidesContainer.style.transform = `translateX(${offset}px)`;
 }
+
+// Listen for window resize events to recalculate carousel positioning.
+window.addEventListener('resize', updateCarouselPosition);
 
 /* ================================
    GEOCODING & MARKER CREATION
@@ -242,7 +247,7 @@ function createOrUpdateMarker(restaurant) {
           }
         });
         markerMap[restaurant.id] = marker;
-        // When the marker is clicked, select the restaurant
+        // When the marker is clicked, select the corresponding restaurant
         marker.addListener('click', () => {
           selectRestaurant(restaurant.id);
         });
