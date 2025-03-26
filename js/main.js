@@ -1,28 +1,20 @@
 /**
- * Main JavaScript File for ATL Happy Hour
+ * Main JavaScript File
  *
- * This version always uses the desktop view (sidebar + map) for all devices.
- * The full filtering logic is restored so that restaurant cards are grouped
- * by neighborhood and shown/hidden based on the active day filters and the 
- * "Happening Now" toggle.
+ * Maintains the original filtering logic (day filters + "Happening Now"),
+ * loads CSV data, renders restaurants in a single "sidebar" panel, and
+ * displays a Google Map. The layout is handled in normal flow by CSS,
+ * so the header/footer can expand/wrap and the sidebar/map can be rearranged
+ * in mobile portrait mode.
  */
 
 /* ================================
    GLOBAL VARIABLES
 ================================ */
-let map;                           // Google Map instance
-let geocoder;                      // For converting addresses to coordinates
-let allRestaurants = [];           // Loaded restaurant data from CSV
-const markerMap = {};              // Maps restaurant.id → google.maps.Marker
-
-/* ================================
-   LAYOUT & VIEW SETUP
-================================ */
-// Since we now use the desktop view in all modes, we always render the sidebar view.
-function updateLayout() {
-  document.getElementById('sidebar').style.display = 'block';
-  renderDesktopView();
-}
+let map;                         // Google Map instance
+let geocoder;                    // Geocoder for converting addresses
+let allRestaurants = [];         // Array holding all restaurant data from CSV
+const markerMap = {};            // Mapping: restaurant.id => google.maps.Marker
 
 /* ================================
    MAP INITIALIZATION & DATA LOADING
@@ -34,23 +26,30 @@ function initMap() {
     disableDefaultUI: true
   });
   geocoder = new google.maps.Geocoder();
+
   loadCSVData();
 }
 
+// Loads restaurant data via PapaParse from a published CSV
 function loadCSVData() {
-  const csvUrl =
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
   Papa.parse(csvUrl, {
     download: true,
     header: true,
     complete: (results) => {
-      // Sort restaurants alphabetically by Neighborhood.
-      const data = results.data.sort((a, b) =>
-        (a.Neighborhood || '').toLowerCase().localeCompare((b.Neighborhood || '').toLowerCase())
-      );
-      // Assign a unique id to each restaurant.
-      data.forEach((row, i) => { row.id = i; });
+      // Sort by neighborhood name
+      const data = results.data.sort((a, b) => {
+        const nA = (a.Neighborhood || '').toLowerCase();
+        const nB = (b.Neighborhood || '').toLowerCase();
+        return nA.localeCompare(nB);
+      });
+      // Assign an ID to each row
+      data.forEach((row, i) => {
+        row.id = i;
+      });
       allRestaurants = data;
+
+      // Render the initial view and apply filters
       renderDesktopView();
       applyFilters();
     },
@@ -61,14 +60,15 @@ function loadCSVData() {
 }
 
 /* ================================
-   DESKTOP VIEW RENDERING
+   DESKTOP-LIKE VIEW (Sidebar)
 ================================ */
+// Renders the restaurant list grouped by neighborhood into #venue-container.
 function renderDesktopView() {
   const container = document.getElementById('venue-container');
   if (!container) return;
   container.innerHTML = '';
 
-  // Group restaurants by Neighborhood.
+  // Group by neighborhood
   const groups = {};
   allRestaurants.forEach(r => {
     const nb = r.Neighborhood ? r.Neighborhood.trim() : 'Uncategorized';
@@ -76,43 +76,48 @@ function renderDesktopView() {
     groups[nb].push(r);
   });
 
-  // Build sections for each neighborhood.
+  // Build sections
   for (const nb in groups) {
     const section = document.createElement('div');
     section.className = 'neighborhood-section';
 
-    // Create a header that zooms to all markers in that neighborhood when clicked.
-    const header = document.createElement('div');
-    header.className = 'neighborhood-header';
-    header.textContent = nb;
-    header.addEventListener('click', () => {
+    // Neighborhood header
+    const nbHeader = document.createElement('div');
+    nbHeader.className = 'neighborhood-header';
+    nbHeader.textContent = nb;
+    nbHeader.addEventListener('click', () => {
       const bounds = new google.maps.LatLngBounds();
       groups[nb].forEach(r => {
         const marker = markerMap[r.id];
-        if (marker) bounds.extend(marker.getPosition());
+        if (marker) {
+          bounds.extend(marker.getPosition());
+        }
       });
-      if (!bounds.isEmpty()) map.fitBounds(bounds);
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds);
+      }
     });
-    section.appendChild(header);
+    section.appendChild(nbHeader);
 
-    const content = document.createElement('div');
-    content.className = 'neighborhood-content';
-    groups[nb].forEach(r => {
-      const card = createRestaurantCard(r);
-      content.appendChild(card);
-      createOrUpdateMarker(r);
+    // Cards
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'neighborhood-content';
+
+    groups[nb].forEach(restaurant => {
+      const card = createRestaurantCard(restaurant);
+      contentDiv.appendChild(card);
+      createOrUpdateMarker(restaurant);
     });
-    // Only add the neighborhood section if it has cards.
-    if (content.children.length > 0) {
-      section.appendChild(content);
-      container.appendChild(section);
-    }
+
+    section.appendChild(contentDiv);
+    container.appendChild(section);
   }
 }
 
 /* ================================
-   MAP MARKER CREATION
+   MAP MARKERS
 ================================ */
+// Creates or updates a marker for a restaurant using geocoder
 function createOrUpdateMarker(restaurant) {
   if (!markerMap[restaurant.id]) {
     const address = getAddressFromMapsURL(restaurant.MapsURL);
@@ -122,7 +127,7 @@ function createOrUpdateMarker(restaurant) {
         const marker = new google.maps.Marker({
           position: results[0].geometry.location,
           map: map,
-          opacity: 0.3, // Initially dimmed
+          opacity: 0.3, // start dim
           icon: {
             url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
             scaledSize: new google.maps.Size(32, 32)
@@ -140,12 +145,13 @@ function createOrUpdateMarker(restaurant) {
 /* ================================
    RESTAURANT CARD CREATION
 ================================ */
-function createRestaurantCard(restaurant, isMobile = false) {
+function createRestaurantCard(restaurant) {
   const card = document.createElement('div');
   card.className = 'restaurant-card';
   card.setAttribute('data-id', restaurant.id);
+
   const faviconURL = getFaviconURL(restaurant.RestaurantURL);
-  const iconSize = isMobile ? 40 : 48;
+
   card.innerHTML = `
     <div class="restaurant-left">
       <div class="restaurant-top">
@@ -168,14 +174,22 @@ function createRestaurantCard(restaurant, isMobile = false) {
         <p>${restaurant.Deal || ''}</p>
       </div>
     </div>
-    <div class="restaurant-right" style="width:${iconSize}px; height:${iconSize}px;">
-      <img src="${faviconURL}" alt="${restaurant.RestaurantName}" onerror="this.onerror=null;this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com'">
+    <div class="restaurant-right" style="width:48px; height:48px;">
+      <img src="${faviconURL}" alt="${restaurant.RestaurantName}"
+           onerror="this.onerror=null;this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com'">
     </div>
   `;
-  card.addEventListener('click', () => selectRestaurant(restaurant.id));
+
+  card.addEventListener('click', () => {
+    selectRestaurant(restaurant.id);
+  });
+
   return card;
 }
 
+/**
+ * getFaviconURL: Returns a Google S2 favicon URL for a restaurant's domain
+ */
 function getFaviconURL(url) {
   try {
     const domain = new URL(url).hostname.replace('www.', '');
@@ -185,6 +199,9 @@ function getFaviconURL(url) {
   }
 }
 
+/**
+ * getAddressFromMapsURL: Extracts "q" parameter from a Google Maps URL
+ */
 function getAddressFromMapsURL(url) {
   if (!url) return null;
   try {
@@ -200,7 +217,7 @@ function getAddressFromMapsURL(url) {
    RESTAURANT SELECTION
 ================================ */
 function selectRestaurant(selectedId) {
-  // Highlight the selected restaurant and update markers.
+  // Markers
   Object.keys(markerMap).forEach(key => {
     const marker = markerMap[key];
     if (Number(key) === Number(selectedId)) {
@@ -211,19 +228,23 @@ function selectRestaurant(selectedId) {
       marker.setOpacity(0.3);
     }
   });
-  document.querySelectorAll('.restaurant-card').forEach(card => card.classList.remove('selected'));
+
+  // Cards
+  document.querySelectorAll('.restaurant-card').forEach(card => {
+    card.classList.remove('selected');
+  });
   const selectedCard = document.querySelector(`.restaurant-card[data-id="${selectedId}"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
-    // Scroll the selected card into view in the sidebar.
+    // Scroll the selected card into view (no special mobile portrait logic needed)
     selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
 
 /* ================================
-   FILTERING LOGIC
+   FILTER LOGIC
 ================================ */
-// Returns an array of active day filters.
+// Returns an array of active day filters
 function getActiveDayFilters() {
   const buttons = document.querySelectorAll('#day-filter button');
   let activeDays = [];
@@ -236,24 +257,25 @@ function getActiveDayFilters() {
   return activeDays;
 }
 
-// Maps day abbreviations to CSV column names.
+// Maps day abbreviations to CSV column names
 function getCsvColumn(day) {
   const mapping = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri' };
   return mapping[day] || day;
 }
 
-// Determines whether a restaurant should be visible based on active filters.
+// Check if a restaurant should be visible based on day/happening-now
 function isRestaurantVisible(restaurant) {
   const happeningNow = document.getElementById('happening-now-toggle').checked;
   const activeDays = getActiveDayFilters();
   let filterDays = [];
-  const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon, etc.
+  const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon, ...
   if (happeningNow && todayIndex >= 1 && todayIndex <= 5) {
     const days = ['sun','mon','tue','wed','thu','fri','sat'];
     filterDays.push(days[todayIndex]);
   } else if (activeDays.length > 0) {
     filterDays = activeDays;
   }
+
   if (filterDays.length > 0) {
     return filterDays.some(day => {
       const col = getCsvColumn(day);
@@ -263,9 +285,8 @@ function isRestaurantVisible(restaurant) {
   return true;
 }
 
-// Applies filters: shows/hides restaurant cards and hides empty neighborhoods.
+// Applies the filter to hide/show cards and markers
 function applyFilters() {
-  // Loop through each restaurant card.
   document.querySelectorAll('.restaurant-card').forEach(card => {
     const id = card.getAttribute('data-id');
     const r = allRestaurants.find(x => String(x.id) === id);
@@ -274,12 +295,15 @@ function applyFilters() {
       show = isRestaurantVisible(r);
     }
     card.style.display = show ? '' : 'none';
+
+    // Hide/show marker
     const marker = markerMap[id];
     if (marker) {
       marker.setMap(show ? map : null);
     }
   });
-  // Hide any neighborhood sections with no visible cards.
+
+  // Hide entire neighborhood sections if none of their cards are visible
   document.querySelectorAll('.neighborhood-section').forEach(section => {
     const visibleCards = section.querySelectorAll('.restaurant-card:not([style*="display: none"])');
     section.style.display = visibleCards.length ? '' : 'none';
@@ -295,6 +319,7 @@ function initFilterListeners() {
   const allButton = document.querySelector('#day-filter button[data-day="all"]');
   const dayMapping = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' };
 
+  // "Happening Now" toggle
   happeningNowToggle.addEventListener('change', function() {
     if (this.checked) {
       const todayIndex = new Date().getDay();
@@ -314,24 +339,28 @@ function initFilterListeners() {
     applyFilters();
   });
 
+  // Day filter buttons
   dayButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       const day = btn.getAttribute('data-day');
       if (day === 'all') {
         dayButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (happeningNowToggle.checked) happeningNowToggle.checked = false;
+        if (happeningNowToggle.checked) {
+          happeningNowToggle.checked = false;
+        }
       } else {
-        if (happeningNowToggle.checked) happeningNowToggle.checked = false;
+        if (happeningNowToggle.checked) {
+          happeningNowToggle.checked = false;
+        }
         btn.classList.toggle('active');
-        const anyActive = Array.from(dayButtons).some(b =>
-          b.getAttribute('data-day') !== 'all' && b.classList.contains('active')
-        );
+        const anyActive = Array.from(dayButtons).some(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'));
         if (anyActive) {
           allButton.classList.remove('active');
         } else {
           allButton.classList.add('active');
         }
+        // If only the current weekday is active => auto "Happening Now"
         const activeDays = Array.from(dayButtons)
           .filter(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'))
           .map(b => b.getAttribute('data-day'));
@@ -346,13 +375,5 @@ function initFilterListeners() {
   });
 }
 
-/* ================================
-   EVENT LISTENERS & INITIALIZATION
-================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  initFilterListeners();
-  updateLayout();
-  // Reapply layout on window resize/orientation change.
-  window.addEventListener('resize', updateLayout);
-  window.addEventListener('orientationchange', () => setTimeout(updateLayout, 100));
-});
+// Initialize filter listeners once the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initFilterListeners);
