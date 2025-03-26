@@ -32,7 +32,7 @@ html, body {
   padding: 0 1rem;
 }
 
-/* Filter Controls => day filters can wrap or scroll to avoid overflow */
+/* Container for filter controls */
 #filter-controls {
   display: flex;
   gap: 1rem;
@@ -41,6 +41,7 @@ html, body {
   max-width: 100%;
 }
 
+/* Day filter buttons container */
 #day-filter {
   display: flex;
   flex-wrap: wrap;
@@ -60,7 +61,7 @@ html, body {
   color: #fff;
 }
 
-/* "Happening Now" Toggle Switch */
+/* "Happening Now" toggle switch */
 .happening-now {
   display: flex;
   align-items: center;
@@ -68,11 +69,11 @@ html, body {
   font-size: 0.85rem;
 }
 
-/* Slightly narrower switch to avoid overflow on mobile */
+/* Switch styling */
 .switch {
   position: relative;
   display: inline-block;
-  width: 42px; /* narrower */
+  width: 42px; /* narrower switch */
   height: 22px;
 }
 .switch input {
@@ -128,15 +129,15 @@ html, body {
 }
 
 /* ================================
-   Map Container
-   - For desktop: to the right
-   - For mobile: top portion
+   Map Container Styling
+   - Desktop: right of sidebar
+   - Mobile: full width below header and above footer
 ================================ */
 #map-container {
   position: fixed;
   top: 60px; /* below header */
   bottom: 30px; /* above footer */
-  left: 320px; /* default for desktop, overridden on mobile */
+  left: 320px; /* offset for desktop sidebar */
   right: 0;
   background: #eee;
   overflow: hidden;
@@ -148,7 +149,7 @@ html, body {
   position: relative;
 }
 
-/* Favicon overlay on map (70% white background) */
+/* Favicon overlay on map */
 #map-favicon-overlay {
   position: absolute;
   top: 10px;
@@ -164,7 +165,7 @@ html, body {
 }
 
 /* ================================
-   Desktop Sidebar (Left)
+   Desktop Sidebar Styling
    - Visible on wide screens
 ================================ */
 #sidebar {
@@ -179,12 +180,12 @@ html, body {
   z-index: 10;
 }
 
-/* Container for desktop restaurant listing */
+/* Container for restaurant listing in desktop sidebar */
 #venue-container {
   padding: 1rem;
 }
 
-/* Neighborhood Headers in desktop mode */
+/* Neighborhood header styling (desktop) */
 .neighborhood-header {
   position: sticky;
   top: 0;
@@ -198,7 +199,7 @@ html, body {
   font-size: 0.9rem;
 }
 
-/* Restaurant Card (desktop) */
+/* Restaurant card styling (desktop) */
 .restaurant-card {
   display: flex;
   justify-content: space-between;
@@ -264,16 +265,16 @@ html, body {
 }
 
 /* ================================
-   Mobile Carousel
-   - Hidden on desktop
+   Mobile Carousel Styling
+   - Visible on narrower screens
 ================================ */
 #mobile-carousel {
-  display: none; /* hidden by default, show on narrower screens */
+  display: none; /* Hidden by default on desktop */
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 30px; /* just above the footer */
-  height: 150px; /* smaller height */
+  bottom: 30px; /* Just above the footer */
+  height: 150px; /* Carousel height for mobile */
   background: #fff;
   border-top: 1px solid #ddd;
   z-index: 10;
@@ -281,11 +282,16 @@ html, body {
 }
 #carousel-slides {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   overflow: hidden;
+  transition: transform 0.3s ease-in-out;
 }
+/* Navigation arrows for mobile carousel */
 .carousel-arrow {
   position: absolute;
   top: 50%;
@@ -305,7 +311,7 @@ html, body {
 #carousel-right {
   right: 10px;
 }
-/* Each "slide" => neighborhood label + 1 card */
+/* Each slide in the mobile carousel: one restaurant card per slide */
 .carousel-slide {
   min-width: 100%;
   max-width: 100%;
@@ -316,22 +322,10 @@ html, body {
   padding: 0.5rem;
   box-sizing: border-box;
 }
-.carousel-slide .neighborhood-label {
-  background: #750787;
-  color: #fff;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  margin-bottom: 0.3rem;
-  font-size: 0.85rem;
-}
-.carousel-slide .restaurant-card {
-  width: 90%;
-  margin-bottom: 0;
-}
 
 /* ================================
    Media Queries
-   - On narrower screens, hide desktop sidebar & show mobile carousel
+   - Adjust layout for narrower screens
 ================================ */
 @media (max-width: 800px) {
   #sidebar {
@@ -340,9 +334,9 @@ html, body {
   #mobile-carousel {
     display: block;
   }
-  /* Let map fill from top=60px to bottom=30px, full width */
+  /* Adjust map container to use full width on mobile */
   #map-container {
-    left: 0; /* no sidebar */
+    left: 0;
     width: 100%;
   }
 }

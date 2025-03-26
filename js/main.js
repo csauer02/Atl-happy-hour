@@ -1,51 +1,65 @@
 /**
- * Main JavaScript File
+ * Main JavaScript File for ATL Happy Hour
  *
- * Fixes:
- *  - "getFaviconURL is not defined" by defining it below.
- *  - "Google Maps JavaScript API has been loaded directly..." => now using async defer in HTML.
- *  - Day filter overflow => wrap or scroll.
- *  - Shrinks the mobile carousel height to 150px.
- *  - Removed any references to "Atlanta Socializers Happy Hour Guide" in the list.
+ * This file includes:
+ *  - Initialization of Google Map and geocoding for restaurant markers.
+ *  - Loading restaurant data from CSV.
+ *  - Rendering for desktop and mobile views (carousel).
+ *  - Filtering logic and interaction (day filters and "Happening Now").
+ *  - Swipe functionality for the mobile carousel.
+ *
+ * Each function is thoroughly commented for clarity.
  */
 
-let map;
-let geocoder;
-let allRestaurants = [];
-const markerMap = {}; // key: restaurant.id => google.maps.Marker
-// For the mobile carousel
-let currentSlideIndex = 0;
-let slidesData = []; // Each element is { neighborhood, restaurant }
+// Global variables
+let map;                         // Google Map instance
+let geocoder;                    // Geocoder for address lookup
+let allRestaurants = [];         // Array holding all restaurant data from CSV
+const markerMap = {};            // Mapping: restaurant.id => google.maps.Marker instance
 
-// Initialize Map
+// Mobile carousel variables
+let currentSlideIndex = 0;       // Current index for the mobile carousel
+let slidesData = [];             // Array holding slide data for mobile carousel: { neighborhood, restaurant }
+
+/* ================================
+   MAP INITIALIZATION & DATA LOADING
+================================ */
+// Called by Google Maps API once the script loads
 function initMap() {
+  // Create the map centered on Atlanta
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 33.7490, lng: -84.3880 },
     zoom: 12,
     disableDefaultUI: true
   });
+
+  // Initialize the geocoder for address-to-coordinate conversion
   geocoder = new google.maps.Geocoder();
 
+  // Load restaurant data from CSV via Google Sheets
   loadCSVData();
 }
 
-// Load CSV from Google Sheets
+// Loads restaurant data using PapaParse from a published Google Sheets CSV
 function loadCSVData() {
   const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
   Papa.parse(csvUrl, {
     download: true,
     header: true,
     complete: (results) => {
-      // Sort by neighborhood
+      // Sort restaurants by neighborhood (alphabetically)
       const data = results.data.sort((a, b) => {
         const nA = (a.Neighborhood || '').toLowerCase();
         const nB = (b.Neighborhood || '').toLowerCase();
         return nA.localeCompare(nB);
       });
+      // Assign a unique ID to each restaurant entry
       data.forEach((row, index) => {
         row.id = index;
       });
       allRestaurants = data;
+
+      // Render views and apply initial filters
       renderDesktopView();
       renderMobileCarousel();
       applyFilters();
@@ -57,14 +71,15 @@ function loadCSVData() {
 }
 
 /* ================================
-   DESKTOP VIEW
+   DESKTOP VIEW RENDERING
 ================================ */
+// Render restaurant cards grouped by neighborhood for desktop view
 function renderDesktopView() {
   const container = document.getElementById('venue-container');
-  if (!container) return; // if no sidebar present
+  if (!container) return; // Abort if sidebar not found
   container.innerHTML = '';
 
-  // Group by neighborhood
+  // Group restaurants by neighborhood
   const groups = {};
   allRestaurants.forEach(r => {
     const nb = r.Neighborhood ? r.Neighborhood.trim() : 'Uncategorized';
@@ -72,12 +87,12 @@ function renderDesktopView() {
     groups[nb].push(r);
   });
 
-  // Build sections
+  // Create a section for each neighborhood group
   for (const neighborhood in groups) {
     const section = document.createElement('div');
     section.className = 'neighborhood-section';
 
-    // Sticky header
+    // Create a sticky header that zooms to the neighborhood markers when clicked
     const nbHeader = document.createElement('div');
     nbHeader.className = 'neighborhood-header';
     nbHeader.textContent = neighborhood;
@@ -95,9 +110,11 @@ function renderDesktopView() {
     });
     section.appendChild(nbHeader);
 
+    // Container for restaurant cards within this neighborhood
     const contentDiv = document.createElement('div');
     contentDiv.className = 'neighborhood-content';
 
+    // Create each restaurant card and its marker
     groups[neighborhood].forEach(restaurant => {
       const card = createRestaurantCard(restaurant);
       contentDiv.appendChild(card);
@@ -110,42 +127,39 @@ function renderDesktopView() {
 }
 
 /* ================================
-   MOBILE CAROUSEL
+   MOBILE CAROUSEL RENDERING
 ================================ */
+// Render the mobile carousel with one restaurant card per slide
 function renderMobileCarousel() {
   const carousel = document.getElementById('mobile-carousel');
-  if (!carousel) return; // no mobile container
+  if (!carousel) return; // Abort if mobile carousel container not found
   const slidesContainer = document.getElementById('carousel-slides');
   slidesContainer.innerHTML = '';
   slidesData = [];
 
+  // Create slide data: one slide per restaurant (ignoring neighborhood header for mobile)
   allRestaurants.forEach(r => {
     const nb = r.Neighborhood ? r.Neighborhood.trim() : 'Uncategorized';
     slidesData.push({ neighborhood: nb, restaurant: r });
   });
 
+  // Create a slide for each restaurant
   slidesData.forEach((item, idx) => {
     const slide = document.createElement('div');
     slide.className = 'carousel-slide';
     slide.setAttribute('data-slide-index', idx);
 
-    // Neighborhood label
-    const nbLabel = document.createElement('div');
-    nbLabel.className = 'neighborhood-label';
-    nbLabel.textContent = item.neighborhood;
-    slide.appendChild(nbLabel);
-
-    // Card
+    // For mobile, only include the restaurant card (omit neighborhood header)
     const card = createRestaurantCard(item.restaurant, true /* isMobile */);
     slide.appendChild(card);
 
     slidesContainer.appendChild(slide);
 
-    // Marker
+    // Ensure a marker exists for the restaurant
     createOrUpdateMarker(item.restaurant);
   });
 
-  // Carousel arrow events
+  // Attach click events for carousel navigation arrows
   document.getElementById('carousel-left').addEventListener('click', () => {
     prevSlide();
   });
@@ -153,19 +167,50 @@ function renderMobileCarousel() {
     nextSlide();
   });
 
+  // Enable swipe gestures on mobile
+  addSwipeListeners();
+
+  // Set the initial slide position
   updateCarouselPosition();
 }
 
+// Add touch event listeners to support swipe gestures
+function addSwipeListeners() {
+  const slidesContainer = document.getElementById('carousel-slides');
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const swipeThreshold = 30; // Minimum distance (in pixels) to count as a swipe
+
+  slidesContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+
+  slidesContainer.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    if (touchEndX < touchStartX - swipeThreshold) {
+      nextSlide();
+    } else if (touchEndX > touchStartX + swipeThreshold) {
+      prevSlide();
+    }
+    // After swipe, auto-select the restaurant on the current slide
+    const currentRestaurant = slidesData[currentSlideIndex].restaurant;
+    selectRestaurant(currentRestaurant.id);
+  });
+}
+
+// Navigate to the previous slide
 function prevSlide() {
   currentSlideIndex = Math.max(0, currentSlideIndex - 1);
   updateCarouselPosition();
 }
 
+// Navigate to the next slide
 function nextSlide() {
   currentSlideIndex = Math.min(slidesData.length - 1, currentSlideIndex + 1);
   updateCarouselPosition();
 }
 
+// Update the carousel's visible position based on the current slide index
 function updateCarouselPosition() {
   const slidesContainer = document.getElementById('carousel-slides');
   const slideWidth = slidesContainer.clientWidth;
@@ -173,61 +218,56 @@ function updateCarouselPosition() {
   slidesContainer.style.transform = `translateX(${offset}px)`;
 }
 
-/**
- * getAddressFromMapsURL
- * Extracts the address from a Google Maps URL (the "q" parameter).
- */
-function getAddressFromMapsURL(url) {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    const params = new URLSearchParams(parsed.search);
-    return params.get('q');
-  } catch (e) {
-    console.warn('Invalid Maps URL:', url);
-    return null;
-  }
-}
-
 /* ================================
-   MARKER CREATION
+   GEOCODING & MARKER CREATION
 ================================ */
+// Creates or updates a map marker for a given restaurant using its address from MapsURL
 function createOrUpdateMarker(restaurant) {
   if (!markerMap[restaurant.id]) {
+    // Extract the address from the Google Maps URL (expects a "q" parameter)
     const address = getAddressFromMapsURL(restaurant.MapsURL);
     if (!address) return;
-    (address, (location) => {
-      if (location) {
+    // Use geocoder to look up the location
+    geocoder.geocode({ address: address }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK && results[0]) {
+        const location = results[0].geometry.location;
+        // Create the marker with an initial lower opacity (dimmed)
         const marker = new google.maps.Marker({
           position: location,
           map: map,
-          opacity: 0.3, // start dim
+          opacity: 0.3,
           icon: {
-            url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
             scaledSize: new google.maps.Size(32, 32)
           }
         });
         markerMap[restaurant.id] = marker;
+        // When the marker is clicked, select the restaurant
         marker.addListener('click', () => {
           selectRestaurant(restaurant.id);
         });
+      } else {
+        console.warn('Geocode was not successful for address:', address, 'Status:', status);
       }
     });
   }
 }
 
 /* ================================
-   CREATE RESTAURANT CARD
+   RESTAURANT CARD CREATION
 ================================ */
+// Creates a restaurant card element for desktop or mobile view.
+// If isMobile is true, extra elements (like the neighborhood header) are omitted.
 function createRestaurantCard(restaurant, isMobile = false) {
   const card = document.createElement('div');
   card.className = 'restaurant-card';
   card.setAttribute('data-id', restaurant.id);
 
-  // Favicon
+  // Obtain favicon URL using the helper function
   const faviconURL = getFaviconURL(restaurant.RestaurantURL);
-
   const iconSize = isMobile ? 40 : 48;
+
+  // Build the card's inner HTML
   card.innerHTML = `
     <div class="restaurant-left">
       <div class="restaurant-top">
@@ -255,6 +295,7 @@ function createRestaurantCard(restaurant, isMobile = false) {
     </div>
   `;
 
+  // When the card is clicked, select the corresponding restaurant
   card.addEventListener('click', () => {
     selectRestaurant(restaurant.id);
   });
@@ -263,8 +304,8 @@ function createRestaurantCard(restaurant, isMobile = false) {
 }
 
 /**
- * getFaviconURL
- * Returns a Google S2 favicon URL for a given domain
+ * Helper function: getFaviconURL
+ * Returns the Google S2 favicon URL for the restaurant's domain.
  */
 function getFaviconURL(url) {
   try {
@@ -275,11 +316,28 @@ function getFaviconURL(url) {
   }
 }
 
+/**
+ * Helper function: getAddressFromMapsURL
+ * Extracts the "q" parameter from a Google Maps URL to get the address.
+ */
+function getAddressFromMapsURL(url) {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    const params = new URLSearchParams(parsed.search);
+    return params.get('q');
+  } catch (e) {
+    console.warn('Invalid Maps URL:', url);
+    return null;
+  }
+}
+
 /* ================================
-   RESTAURANT SELECTION
+   RESTAURANT SELECTION & HIGHLIGHTING
 ================================ */
+// Selects a restaurant by its ID, updating marker opacity and card highlighting.
 function selectRestaurant(selectedId) {
-  // Markers
+  // Update map markers: highlight selected, dim others.
   Object.keys(markerMap).forEach(key => {
     const marker = markerMap[key];
     if (Number(key) === Number(selectedId)) {
@@ -291,23 +349,16 @@ function selectRestaurant(selectedId) {
     }
   });
 
-  // Cards (desktop & mobile)
+  // Update card selection styling
   document.querySelectorAll('.restaurant-card').forEach(card => {
     card.classList.remove('selected');
   });
   const selectedCard = document.querySelector(`.restaurant-card[data-id="${selectedId}"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
+    // On desktop, scroll the selected card into view within the sidebar.
     if (window.innerWidth > 800) {
-      // Desktop => scroll in sidebar
       selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      // Mobile => find the slide index, move carousel
-      const idx = slidesData.findIndex(s => s.restaurant.id === Number(selectedId));
-      if (idx >= 0) {
-        currentSlideIndex = idx;
-        updateCarouselPosition();
-      }
     }
   }
 }
@@ -315,11 +366,13 @@ function selectRestaurant(selectedId) {
 /* ================================
    FILTERING LOGIC
 ================================ */
+// Apply filters based on day selections and the "Happening Now" toggle.
 function applyFilters() {
   const happeningNow = document.getElementById('happening-now-toggle').checked;
   const activeDays = getActiveDayFilters();
   let filterDays = [];
 
+  // Determine the days to filter on based on the toggle or active day buttons
   const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon, ...
   if (happeningNow && todayIndex >= 1 && todayIndex <= 5) {
     const days = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -328,6 +381,7 @@ function applyFilters() {
     filterDays = activeDays;
   }
 
+  // Loop through each restaurant card to show or hide based on filter criteria
   document.querySelectorAll('.restaurant-card').forEach(card => {
     const id = card.getAttribute('data-id');
     const r = allRestaurants.find(x => String(x.id) === id);
@@ -339,14 +393,22 @@ function applyFilters() {
       });
     }
     card.style.display = show ? '' : 'none';
-    // Hide/show marker
+
+    // Also show/hide the corresponding map marker
     const marker = markerMap[id];
     if (marker) {
       marker.setMap(show ? map : null);
     }
   });
+
+  // Hide entire neighborhood sections if none of their restaurant cards are visible
+  document.querySelectorAll('.neighborhood-section').forEach(section => {
+    const visibleCards = section.querySelectorAll('.restaurant-card:not([style*="display: none"])');
+    section.style.display = visibleCards.length ? '' : 'none';
+  });
 }
 
+// Returns an array of active day filters based on which day buttons are active.
 function getActiveDayFilters() {
   const buttons = document.querySelectorAll('#day-filter button');
   let activeDays = [];
@@ -358,21 +420,24 @@ function getActiveDayFilters() {
   });
   return activeDays;
 }
+
+// Maps day abbreviations to CSV column names.
 function getCsvColumn(day) {
   const mapping = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri' };
   return mapping[day] || day;
 }
 
 /* ================================
-   INIT FILTER LISTENERS
+   FILTER LISTENERS INITIALIZATION
 ================================ */
+// Initialize event listeners for day filter buttons and the "Happening Now" toggle.
 function initFilterListeners() {
   const dayButtons = document.querySelectorAll('#day-filter button');
   const happeningNowToggle = document.getElementById('happening-now-toggle');
   const allButton = document.querySelector('#day-filter button[data-day="all"]');
   const dayMapping = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' };
 
-  // "Happening Now" toggle
+  // Listener for the "Happening Now" toggle
   happeningNowToggle.addEventListener('change', function() {
     if (this.checked) {
       const todayIndex = new Date().getDay();
@@ -386,24 +451,24 @@ function initFilterListeners() {
         });
         allButton.classList.remove('active');
       } else {
-        // Weekend => revert to All
+        // If it's a weekend, revert to "All Days"
         dayButtons.forEach(btn => btn.classList.remove('active'));
         allButton.classList.add('active');
       }
     } else {
-      // Turned off => "All Days"
+      // Toggle off: revert to "All Days"
       dayButtons.forEach(btn => btn.classList.remove('active'));
       allButton.classList.add('active');
     }
     applyFilters();
   });
 
-  // Day filter buttons
+  // Listener for individual day filter buttons
   dayButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       const day = btn.getAttribute('data-day');
       if (day === 'all') {
-        // Clear others, ensure "all" is active, turn off "Happening Now"
+        // Activate "All Days" and disable other filters
         dayButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if (happeningNowToggle.checked) {
@@ -414,13 +479,14 @@ function initFilterListeners() {
           happeningNowToggle.checked = false;
         }
         btn.classList.toggle('active');
+        // Ensure at least one day is active; if none, default to "All Days"
         const anyActive = Array.from(dayButtons).some(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'));
         if (anyActive) {
           allButton.classList.remove('active');
         } else {
           allButton.classList.add('active');
         }
-        // If only the current weekday is active => auto "Happening Now"
+        // If the only active day is the current weekday, auto-enable "Happening Now"
         const activeDays = Array.from(dayButtons)
           .filter(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'))
           .map(b => b.getAttribute('data-day'));
@@ -435,4 +501,5 @@ function initFilterListeners() {
   });
 }
 
+// Initialize filter listeners once the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initFilterListeners);
