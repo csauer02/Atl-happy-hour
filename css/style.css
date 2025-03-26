@@ -255,14 +255,14 @@ html, body {
    Mobile Carousel (Portrait Mode)
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
-  /* Hide desktop sidebar; map occupies full width above carousel */
+  /* Hide sidebar; map takes full width above carousel */
   #sidebar {
     display: none;
   }
   #map-container {
     left: 0;
     width: 100%;
-    bottom: 150px; /* leave space for carousel */
+    bottom: 150px;
   }
   /* Show mobile carousel */
   #mobile-carousel {
@@ -277,7 +277,7 @@ html, body {
     z-index: 20;
     overflow: hidden;
   }
-  /* Carousel slides container: auto-expanding */
+  /* Carousel slides container */
   #carousel-slides {
     position: absolute;
     top: 0;
@@ -286,7 +286,7 @@ html, body {
     display: flex;
     transition: transform 0.3s ease-in-out;
   }
-  /* Each slide occupies 100% of the carousel’s width */
+  /* Each slide occupies 100% of the carousel width */
   .carousel-slide {
     flex: 0 0 100%;
     display: flex;
@@ -296,7 +296,7 @@ html, body {
     padding: 0.5rem;
     box-sizing: border-box;
   }
-  /* Carousel navigation arrows */
+  /* Navigation arrows */
   .carousel-arrow {
     position: absolute;
     top: 50%;
@@ -320,7 +320,7 @@ html, body {
 
 /* ================================
    Mobile Landscape Mode
-   - In landscape, use the standard desktop view.
+   - Use standard desktop view.
 ================================ */
 @media (max-width: 800px) and (orientation: landscape) {
   #mobile-carousel {
