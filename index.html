@@ -22,7 +22,7 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Header with Filter Controls (expands/wraps as needed) -->
+  <!-- Header with Filter Controls -->
   <header id="global-header">
     <div id="filter-controls">
       <div id="day-filter">
@@ -43,16 +43,16 @@
     </div>
   </header>
 
-  <!-- Main Content => sidebar + map in normal flow -->
+  <!-- Main Content -->
   <main id="main-content">
-    <!-- Sidebar for restaurant listing -->
+    <!-- Sidebar / Restaurant Panel -->
     <section id="sidebar">
       <div id="venue-container">
-        <!-- JS will inject the restaurant cards (grouped by neighborhood) here -->
+        <!-- Restaurant cards (grouped by neighborhood) will be injected here -->
       </div>
     </section>
 
-    <!-- Map container -->
+    <!-- Map Panel -->
     <section id="map-container">
       <div id="map-favicon-overlay">
         <img src="/Atl-happy-hour/favicon-96x96.png" alt="Site Favicon" />
@@ -61,7 +61,7 @@
     </section>
   </main>
 
-  <!-- Footer with reduced padding -->
+  <!-- Footer (fixed to bottom) -->
   <footer id="global-footer">
     <p>As of March 2025 – call or visit each restaurant for up-to-date offers.</p>
   </footer>
@@ -69,8 +69,7 @@
   <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
-
-  <!-- Google Maps API with your API key -->
+  <!-- Google Maps API (using your API key) -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"
     async
