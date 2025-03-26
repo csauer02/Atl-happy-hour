@@ -1,20 +1,20 @@
 /**
  * Main JavaScript File
  *
- * Maintains the original filtering logic (day filters + "Happening Now"),
- * loads CSV data, renders restaurants in a single "sidebar" panel, and
- * displays a Google Map. The layout is handled in normal flow by CSS,
- * so the header/footer can expand/wrap and the sidebar/map can be rearranged
- * in mobile portrait mode.
+ * Retains the full filter logic (day filters + "Happening Now") and pins
+ * neighborhood headers inside the sidebar. The layout is controlled by CSS,
+ * allowing the header and footer to wrap as needed, and ensuring in
+ * landscape mode that the entire interface fits on one screen with the
+ * sidebar scrollable if content is tall.
  */
 
 /* ================================
    GLOBAL VARIABLES
 ================================ */
-let map;                         // Google Map instance
-let geocoder;                    // Geocoder for converting addresses
-let allRestaurants = [];         // Array holding all restaurant data from CSV
-const markerMap = {};            // Mapping: restaurant.id => google.maps.Marker
+let map;
+let geocoder;
+let allRestaurants = [];
+const markerMap = {};
 
 /* ================================
    MAP INITIALIZATION & DATA LOADING
@@ -30,39 +30,36 @@ function initMap() {
   loadCSVData();
 }
 
-// Loads restaurant data via PapaParse from a published CSV
 function loadCSVData() {
-  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
+  const csvUrl =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxih2SsybskeLkCCx-HNENiyM3fY3QaLj7Z_uw-Qw-kp7a91cShfW45Y9IZTd6bKYv-1-MTOVoWFH/pub?gid=0&single=true&output=csv';
   Papa.parse(csvUrl, {
     download: true,
     header: true,
-    complete: (results) => {
-      // Sort by neighborhood name
+    complete: results => {
+      // Sort by neighborhood
       const data = results.data.sort((a, b) => {
         const nA = (a.Neighborhood || '').toLowerCase();
         const nB = (b.Neighborhood || '').toLowerCase();
         return nA.localeCompare(nB);
       });
-      // Assign an ID to each row
       data.forEach((row, i) => {
         row.id = i;
       });
       allRestaurants = data;
 
-      // Render the initial view and apply filters
       renderDesktopView();
       applyFilters();
     },
-    error: (err) => {
+    error: err => {
       console.error('Error parsing CSV:', err);
     }
   });
 }
 
 /* ================================
-   DESKTOP-LIKE VIEW (Sidebar)
+   SIDEBAR RENDERING (ALL MODES)
 ================================ */
-// Renders the restaurant list grouped by neighborhood into #venue-container.
 function renderDesktopView() {
   const container = document.getElementById('venue-container');
   if (!container) return;
@@ -76,12 +73,12 @@ function renderDesktopView() {
     groups[nb].push(r);
   });
 
-  // Build sections
+  // Create sections
   for (const nb in groups) {
     const section = document.createElement('div');
     section.className = 'neighborhood-section';
 
-    // Neighborhood header
+    // Sticky neighborhood header
     const nbHeader = document.createElement('div');
     nbHeader.className = 'neighborhood-header';
     nbHeader.textContent = nb;
@@ -99,7 +96,7 @@ function renderDesktopView() {
     });
     section.appendChild(nbHeader);
 
-    // Cards
+    // Neighborhood content
     const contentDiv = document.createElement('div');
     contentDiv.className = 'neighborhood-content';
 
@@ -117,7 +114,6 @@ function renderDesktopView() {
 /* ================================
    MAP MARKERS
 ================================ */
-// Creates or updates a marker for a restaurant using geocoder
 function createOrUpdateMarker(restaurant) {
   if (!markerMap[restaurant.id]) {
     const address = getAddressFromMapsURL(restaurant.MapsURL);
@@ -127,7 +123,7 @@ function createOrUpdateMarker(restaurant) {
         const marker = new google.maps.Marker({
           position: results[0].geometry.location,
           map: map,
-          opacity: 0.3, // start dim
+          opacity: 0.3,
           icon: {
             url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
             scaledSize: new google.maps.Size(32, 32)
@@ -135,8 +131,6 @@ function createOrUpdateMarker(restaurant) {
         });
         markerMap[restaurant.id] = marker;
         marker.addListener('click', () => selectRestaurant(restaurant.id));
-      } else {
-        console.warn('Geocode failed for address:', address, 'Status:', status);
       }
     });
   }
@@ -174,7 +168,7 @@ function createRestaurantCard(restaurant) {
         <p>${restaurant.Deal || ''}</p>
       </div>
     </div>
-    <div class="restaurant-right" style="width:48px; height:48px;">
+    <div class="restaurant-right">
       <img src="${faviconURL}" alt="${restaurant.RestaurantName}"
            onerror="this.onerror=null;this.src='https://www.google.com/s2/favicons?sz=64&domain=example.com'">
     </div>
@@ -187,9 +181,9 @@ function createRestaurantCard(restaurant) {
   return card;
 }
 
-/**
- * getFaviconURL: Returns a Google S2 favicon URL for a restaurant's domain
- */
+/* ================================
+   UTILS
+================================ */
 function getFaviconURL(url) {
   try {
     const domain = new URL(url).hostname.replace('www.', '');
@@ -198,10 +192,6 @@ function getFaviconURL(url) {
     return 'https://www.google.com/s2/favicons?sz=64&domain=example.com';
   }
 }
-
-/**
- * getAddressFromMapsURL: Extracts "q" parameter from a Google Maps URL
- */
 function getAddressFromMapsURL(url) {
   if (!url) return null;
   try {
@@ -236,7 +226,6 @@ function selectRestaurant(selectedId) {
   const selectedCard = document.querySelector(`.restaurant-card[data-id="${selectedId}"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
-    // Scroll the selected card into view (no special mobile portrait logic needed)
     selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
@@ -244,7 +233,6 @@ function selectRestaurant(selectedId) {
 /* ================================
    FILTER LOGIC
 ================================ */
-// Returns an array of active day filters
 function getActiveDayFilters() {
   const buttons = document.querySelectorAll('#day-filter button');
   let activeDays = [];
@@ -256,14 +244,10 @@ function getActiveDayFilters() {
   });
   return activeDays;
 }
-
-// Maps day abbreviations to CSV column names
 function getCsvColumn(day) {
   const mapping = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri' };
   return mapping[day] || day;
 }
-
-// Check if a restaurant should be visible based on day/happening-now
 function isRestaurantVisible(restaurant) {
   const happeningNow = document.getElementById('happening-now-toggle').checked;
   const activeDays = getActiveDayFilters();
@@ -275,7 +259,6 @@ function isRestaurantVisible(restaurant) {
   } else if (activeDays.length > 0) {
     filterDays = activeDays;
   }
-
   if (filterDays.length > 0) {
     return filterDays.some(day => {
       const col = getCsvColumn(day);
@@ -285,7 +268,7 @@ function isRestaurantVisible(restaurant) {
   return true;
 }
 
-// Applies the filter to hide/show cards and markers
+// Show/hide cards + markers based on filters
 function applyFilters() {
   document.querySelectorAll('.restaurant-card').forEach(card => {
     const id = card.getAttribute('data-id');
@@ -295,8 +278,6 @@ function applyFilters() {
       show = isRestaurantVisible(r);
     }
     card.style.display = show ? '' : 'none';
-
-    // Hide/show marker
     const marker = markerMap[id];
     if (marker) {
       marker.setMap(show ? map : null);
@@ -319,7 +300,6 @@ function initFilterListeners() {
   const allButton = document.querySelector('#day-filter button[data-day="all"]');
   const dayMapping = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' };
 
-  // "Happening Now" toggle
   happeningNowToggle.addEventListener('change', function() {
     if (this.checked) {
       const todayIndex = new Date().getDay();
@@ -339,20 +319,15 @@ function initFilterListeners() {
     applyFilters();
   });
 
-  // Day filter buttons
   dayButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       const day = btn.getAttribute('data-day');
       if (day === 'all') {
         dayButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (happeningNowToggle.checked) {
-          happeningNowToggle.checked = false;
-        }
+        if (happeningNowToggle.checked) happeningNowToggle.checked = false;
       } else {
-        if (happeningNowToggle.checked) {
-          happeningNowToggle.checked = false;
-        }
+        if (happeningNowToggle.checked) happeningNowToggle.checked = false;
         btn.classList.toggle('active');
         const anyActive = Array.from(dayButtons).some(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'));
         if (anyActive) {
@@ -360,7 +335,6 @@ function initFilterListeners() {
         } else {
           allButton.classList.add('active');
         }
-        // If only the current weekday is active => auto "Happening Now"
         const activeDays = Array.from(dayButtons)
           .filter(b => b.getAttribute('data-day') !== 'all' && b.classList.contains('active'))
           .map(b => b.getAttribute('data-day'));
@@ -375,5 +349,4 @@ function initFilterListeners() {
   });
 }
 
-// Initialize filter listeners once the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initFilterListeners);
