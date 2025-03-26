@@ -15,28 +15,34 @@ html, body {
 }
 
 /* ================================
-   Header with Filter Controls
-   - Expands and wraps as needed
+   Fixed Global Header (Desktop/Landscape)
 ================================ */
 #global-header {
-  width: 100%;
+  position: fixed;        /* Restored fixed positioning for desktop */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
   background: #fff;
   border-bottom: 1px solid #ddd;
+  z-index: 1000;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.5rem 1rem;
+  padding: 0 1rem;
 }
 
-/* Filter Controls */
+/* ================================
+   Filter Controls & Buttons
+================================ */
 #filter-controls {
   display: flex;
-  flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
   max-width: 100%;
 }
+
 #day-filter {
   display: flex;
   flex-wrap: wrap;
@@ -55,13 +61,14 @@ html, body {
   background: #333;
   color: #fff;
 }
+
+/* "Happening Now" Toggle Switch */
 .happening-now {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
 }
-/* Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -98,54 +105,43 @@ html, body {
 }
 
 /* ================================
-   Footer (Fixed to Bottom)
-   - Reduced padding
+   Fixed Footer (Desktop/Landscape)
 ================================ */
 #global-footer {
-  position: fixed;
+  position: fixed;       /* Restored fixed positioning for desktop */
   bottom: 0;
   left: 0;
-  width: 100%;
+  right: 0;
+  height: 30px;
   background: #f1f1f1;
   border-top: 1px solid #ddd;
+  z-index: 1000;
   text-align: center;
+  line-height: 30px;
   font-size: 0.85rem;
   color: #555;
-  padding: 0.25rem; /* Reduced vertical padding */
-  z-index: 1000;
+  margin: 0;
+  padding: 0;
 }
 
 /* ================================
-   Main Content Layout
-   - In desktop/landscape, sidebar on left and map on right.
-   - In mobile portrait, sidebar above map.
-   - Main content is padded to avoid overlap with header and fixed footer.
+   Map Container (Desktop/Landscape)
+   - Right of sidebar, below header, above footer
 ================================ */
-#main-content {
-  display: flex;
-  flex-direction: row;
-  padding-top: calc(1rem + 0.5rem); /* at least header height, header is not fixed now */
-  /* Add bottom margin equal to footer height to avoid overlap */
-  margin-bottom: 40px; /* Assume footer ~40px tall; this will be updated dynamically if needed */
-}
-
-/* Desktop Sidebar */
-#sidebar {
-  width: 320px;
-  background: #fff;
-  border-right: 1px solid #ddd;
-  overflow-y: auto;
-  position: relative;
-}
-#venue-container {
-  padding: 0.5rem; /* Denser */
-}
-
-/* Map Container */
 #map-container {
-  flex: 1;
-  position: relative;
+  position: fixed;       /* Restored fixed positioning for desktop */
+  top: 60px;             /* below header */
+  bottom: 30px;          /* above footer */
+  left: 320px;           /* offset for desktop sidebar */
+  right: 0;
   background: #eee;
+  overflow: hidden;
+  z-index: 1;
+}
+#map {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 #map-favicon-overlay {
   position: absolute;
@@ -154,14 +150,29 @@ html, body {
   background: rgba(255,255,255,0.7);
   padding: 5px;
   border-radius: 4px;
+  z-index: 10;
 }
 #map-favicon-overlay img {
   width: 32px;
   height: 32px;
 }
-#map {
-  width: 100%;
-  height: 600px; /* default desktop height */
+
+/* ================================
+   Sidebar (Desktop/Landscape)
+================================ */
+#sidebar {
+  position: fixed;       /* Restored fixed positioning for desktop */
+  top: 60px;
+  bottom: 30px;
+  left: 0;
+  width: 320px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  z-index: 10;
+}
+#venue-container {
+  padding: 1rem;
 }
 
 /* ================================
@@ -171,6 +182,8 @@ html, body {
   margin-bottom: 0.5rem;
 }
 .neighborhood-header {
+  position: sticky;
+  top: 0;
   background: #750787;
   color: #fff;
   padding: 0.4rem;
@@ -178,8 +191,6 @@ html, body {
   margin-bottom: 0.4rem;
   border-radius: 4px;
   font-size: 0.85rem;
-  position: sticky;
-  top: 0;
   z-index: 1;
 }
 .restaurant-card {
@@ -248,25 +259,47 @@ html, body {
 
 /* ================================
    Mobile Portrait Layout
-   - Sidebar (restaurant panel) above Map
-   - Dynamically sized using available viewport height (header and footer excluded)
+   - Overrides the default fixed layout
+   - Stacks header, sidebar, and map
 ================================ */
 @media (max-width: 800px) and (orientation: portrait) {
-  #main-content {
-    flex-direction: column;
-    /* We'll set the height dynamically via JavaScript */
-  }
-  #sidebar {
+  /* Make the header non-fixed so it can wrap nicely */
+  #global-header {
+    position: static;
     width: 100%;
-    /* Height will be set to 40% of available content height */
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Footer: also no longer fixed in portrait */
+  #global-footer {
+    position: static;
+    width: 100%;
+    height: auto;
+    line-height: normal;
+    padding: 0.25rem;
+  }
+
+  /* Remove fixed positioning from sidebar and map */
+  #sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
     border-right: none;
     border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
   }
+  #venue-container {
+    padding: 0.5rem;
+  }
+
   #map-container {
+    position: static;
     width: 100%;
-    /* Height set to 60% of available content height */
+    height: auto;
+    margin-bottom: 1rem;
   }
   #map {
-    height: 100%;
+    width: 100%;
+    height: 400px; /* or use a dynamic height if you prefer */
   }
 }
