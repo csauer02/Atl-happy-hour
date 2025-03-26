@@ -11,7 +11,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Favicon and related icons -->
+  <!-- Favicon, etc. -->
   <link rel="icon" type="image/svg+xml" href="/Atl-happy-hour/favicon.svg" />
   <link rel="icon" type="image/png" href="/Atl-happy-hour/favicon-96x96.png" sizes="96x96" />
   <link rel="shortcut icon" href="/Atl-happy-hour/favicon.ico" />
@@ -19,7 +19,7 @@
   <link rel="manifest" href="/Atl-happy-hour/site.webmanifest" />
 </head>
 <body>
-  <!-- Fixed Global Header with Filter Controls -->
+  <!-- Dynamic, Wrapping Header with Filters -->
   <header id="global-header">
     <div id="filter-controls">
       <div id="day-filter">
@@ -40,22 +40,25 @@
     </div>
   </header>
 
-  <!-- Desktop Sidebar -->
-  <div id="sidebar">
-    <div id="venue-container">
-      <!-- Restaurant cards (grouped by neighborhood) are injected here via JavaScript -->
-    </div>
-  </div>
+  <!-- Main Content: Sidebar + Map in a normal flow -->
+  <main id="main-content">
+    <!-- Sidebar for restaurant listings -->
+    <aside id="sidebar">
+      <div id="venue-container">
+        <!-- Neighborhood sections & restaurant cards are injected here by JS -->
+      </div>
+    </aside>
 
-  <!-- Map Container -->
-  <div id="map-container">
-    <div id="map-favicon-overlay">
-      <img src="/Atl-happy-hour/favicon-96x96.png" alt="Site Favicon" />
-    </div>
-    <div id="map"></div>
-  </div>
+    <!-- Map Container -->
+    <section id="map-container">
+      <div id="map-favicon-overlay">
+        <img src="/Atl-happy-hour/favicon-96x96.png" alt="Site Favicon" />
+      </div>
+      <div id="map"></div>
+    </section>
+  </main>
 
-  <!-- Fixed Footer -->
+  <!-- Dynamically wrapping Footer -->
   <footer id="global-footer">
     <p>As of March 2025 – call or visit each restaurant for up-to-date offers.</p>
   </footer>
@@ -63,7 +66,7 @@
   <!-- External Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="js/main.js"></script>
-  <!-- Google Maps API using your API key -->
+  <!-- Google Maps API (use your valid key) -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb5VroOXeZyuh8JFy-5uhrz8QoTDQ--8s&callback=initMap"
     async
