@@ -126,8 +126,7 @@ html, body {
 
 /* ================================
    Map Container
-   - Desktop & Mobile Landscape: sidebar visible.
-   - Mobile Portrait: map occupies full width above carousel.
+   - The map occupies the space to the right of the sidebar.
 ================================ */
 #map-container {
   position: fixed;
@@ -174,6 +173,9 @@ html, body {
 }
 #venue-container {
   padding: 1rem;
+}
+.neighborhood-section {
+  margin-bottom: 1rem;
 }
 .neighborhood-header {
   position: sticky;
@@ -249,89 +251,4 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* ================================
-   Mobile Carousel (Portrait Mode)
-================================ */
-@media (max-width: 800px) and (orientation: portrait) {
-  /* Hide sidebar; map takes full width above carousel */
-  #sidebar {
-    display: none;
-  }
-  #map-container {
-    left: 0;
-    width: 100%;
-    bottom: 150px;
-  }
-  /* Show mobile carousel */
-  #mobile-carousel {
-    display: block;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 150px;
-    background: #fff;
-    border-top: 1px solid #ddd;
-    z-index: 20;
-    overflow: hidden;
-  }
-  /* Carousel slides container */
-  #carousel-slides {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    display: flex;
-    transition: transform 0.3s ease-in-out;
-  }
-  /* Each slide occupies 100% of the carousel width */
-  .carousel-slide {
-    flex: 0 0 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    box-sizing: border-box;
-  }
-  /* Navigation arrows */
-  .carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.8);
-    border: none;
-    font-size: 1.8rem;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    z-index: 25;
-    border-radius: 50%;
-  }
-  #carousel-left {
-    left: 10px;
-  }
-  #carousel-right {
-    right: 10px;
-  }
-}
-
-/* ================================
-   Mobile Landscape Mode
-   - Use standard desktop view.
-================================ */
-@media (max-width: 800px) and (orientation: landscape) {
-  #mobile-carousel {
-    display: none;
-  }
-  #sidebar {
-    display: block;
-  }
-  #map-container {
-    left: 320px;
-    width: calc(100% - 320px);
-    bottom: 30px;
-  }
 }
